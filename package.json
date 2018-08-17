@@ -11,14 +11,30 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.sortEntries"
+        "onLanguage:bibtex"
     ],
     "main": "./out/extension",
     "contributes": {
         "commands": [
             {
-                "command": "extension.sortEntries",
-                "title": "Bib Manager: Sort Entries"
+                "command": "extension.createEntry",
+                "category": "BibTex",
+                "title": "Create New Entry"
+            },
+            {
+                "command": "extension.deleteEntry",
+                "category": "BibTex",
+                "title": "Delete Entry"
+            },
+            {
+                "command": "extension.sortEntriesAsc",
+                "category": "BibTex",
+                "title": "Sort Entries By Key (Ascending)"
+            },
+            {
+                "command": "extension.sortEntriesDsc",
+                "category": "BibTex",
+                "title": "Sort Entries By Key (Descending)"
             }
         ]
     },
