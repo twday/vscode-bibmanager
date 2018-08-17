@@ -1,9 +1,23 @@
 {
     "name": "vscode-bibmanager",
-    "displayName": "vscode-bibmanager",
+    "displayName": "BibManager - BibTex File Management",
     "description": "VS Code extension for managing BibTex entries",
     "version": "0.0.1",
+    "author": {
+        "name": "Thomas Day",
+        "email": "tday42@gmail.com"
+    },
     "publisher": "twday",
+    "icon": "images/bibmanager-icon.png",
+    "license": "MIT",
+    "homepage": "https://github.com/twday/vscode-bibmanager/blob/master/README.md",
+    "bugs": {
+        "url": "https://github.com/twday/vscode-bibmanager/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/twday/vscode-bibmanager.git"
+    },
     "engines": {
         "vscode": "^1.25.0"
     },
@@ -14,6 +28,9 @@
         "onLanguage:bibtex"
     ],
     "main": "./out/extension",
+    "keywords": [
+        "BibTeX"
+    ],
     "contributes": {
         "commands": [
             {
