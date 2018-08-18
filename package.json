@@ -1,7 +1,7 @@
 {
-    "name": "vscode-bibmanager",
+    "name": "bibmanager",
     "displayName": "BibManager - BibTex File Management",
-    "description": "VS Code extension for managing BibTex entries",
+    "description": "VS Code extension for managing BibTex bibliographies",
     "version": "0.0.1",
     "author": {
         "name": "Thomas Day",

@@ -127,7 +127,7 @@ class BibManager{
                             window.showInputBox({prompt:"year"}).then((year)=>{
                                 entry.year = parseInt(year, 10);
 
-                                console.log(entry);
+                                this.bibEntries.push(entry);
                                 this.updateBibFile();
                             });
                         });
@@ -148,7 +148,6 @@ class BibManager{
             if (selection !== undefined || selection !== ""){
                 this.bibEntries.forEach((entry, i)=>{
                     if(selection === entry.key){
-                        this.bibEntries.splice(i);
                     }
                 });
             }

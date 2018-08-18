@@ -1,9 +1,24 @@
-# BibtexSorter README
+<p align="center">
+  <br />
+  <a title="Learn more about BibManager" href="http://github.com/twday/vscode-bibmanager"><img src="https://raw.githubusercontent.com/twday/vscode-bibmanager/master/images/bibmanager-icon.png" alt="BibManager-Logo" /></a>
+</p>
 
-This is the README for your extension "BibtexSorter". After writing up a brief description, we recommend including the following sections.
+[![](https://vsmarketplacebadge.apphb.com/version-short/twday.vscode-bibmanager.svg)](https://marketplace.visualstudio.com/items?itemName=twday.vscode-bibmanager)
+[![](https://vsmarketplacebadge.apphb.com/installs-short/twday.vscode-bibmanager.svg)](https://marketplace.visualstudio.com/items?itemName=twday.vscode-bibmanager)
+[![](https://vsmarketplacebadge.apphb.com/rating-short/twday.vscode-bibmanager.svg)](https://marketplace.visualstudio.com/items?itemName=twday.vscode-bibmanager)
+-------------------------------------------------------------
+This is the README for your extension "BibManager". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 
+### Creating a Bibliography Entry
+![Creating an Entry](images/features/creating.gif)
+
+### Sorting Bibliography
+By Key
+![Sorting by Key](images/features/sortKeyAsc.gif)
+### Creating a Bibliography Entry
+![Creating an Entry](images/features/creating.gif)
 Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
 
 For example if there is an image subfolder under your extension project workspace:
