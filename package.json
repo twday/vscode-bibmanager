@@ -46,14 +46,16 @@
                 "command": "extension.sortKeyDsc",
                 "category": "BibTex",
                 "title": "Sort Entries By Key (Descending)"
-            }
-        ],
-        "languages": [
+            },
             {
-                "id": "bibtex",
-                "extensions": [
-                    ".bib"
-                ]
+                "command": "extension.sortTitleAsc",
+                "category": "BibTex",
+                "title": "Sort Entries By Title (Ascending)"
+            },
+            {
+                "command": "extension.sortTitleDsc",
+                "category": "BibTex",
+                "title": "Sort Entries By Title (Descending)"
             }
         ],
         "snippets": [
