@@ -1,27 +1,30 @@
 {
-    "article": {
-       "prefix": "article",
-       "body": [
+    "Article Reference": {
+        "scope": "bibtex, latex",
+        "prefix": "article",
+        "body": [
             "@article{${1:key},",
             "   title = {${2:title}},",
             "   author = {${3:author}},",
             "   journal = {${4:journal}},",
             "   year = {${5:year}}",
             "}"
-       ]
+        ]
     },
-    "book": {
-       "prefix": "book",
-       "body": [
+    "Book Reference": {
+        "scope": "bibtex, latex",
+        "prefix": "book",
+        "body": [
             "@book{${1:key},",
             "   title = {${2:title}},",
             "   author = {${3:author}},",
             "   journal = {${4:journal}},",
             "   year = {${5:year}}",
             "}"
-       ]
+        ]
     },
-    "inproceedings": {
+    "Reference in proceedings": {
+        "scope": "bibtex, latex",
         "prefix": "inproceedings",
         "body": [
             "@inproceedings{${1:key},",
@@ -32,7 +35,8 @@
             "}"
         ]
     },
-    "electronic": {
+    "Electronic Reference": {
+        "scope": "bibtex, latex",
         "prefix": "electronic",
         "body": [
             "@electronic{${1:key},",
@@ -43,17 +47,40 @@
             "}"
         ]
     },
-    "misc": {
+    "Miscellaneous Reference": {
+        "scope": "bibtex, latex",
         "prefix": "misc",
         "body": [
             "@misc{${1:key},",
-            "   title = {${1:title},",
-            "   howpublished = {$2},",
-            "   note = {$3}",
+            "   title = {${2:title},",
+            "   howpublished = {$3},",
+            "   note = {$4}",
             "}"
         ]
     },
-    "pages":{
+    "Title of the Paper":{
+        "scope": "bibtex, latex",
+        "prefix": "title",
+        "body":[
+            "title = {${1:title}},"
+        ]
+    },
+    "List of Authors":{
+        "scope": "bibtex, latex",
+        "prefix": "authors",
+        "body":[
+            "author = {${1:author}},"
+        ]
+    },   
+    "Reference Journal":{
+        "scope": "bibtex, latex",
+        "prefix": "journal",
+        "body": [
+            "journal = {${1:journal}},"
+        ]
+    },
+    "Pages of References":{
+        "scope": "bibtex, latex",
         "prefix":"pages",
         "body": [
             "pages = {${1}-${2}}"
