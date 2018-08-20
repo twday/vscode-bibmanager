@@ -16,7 +16,6 @@ enum SortType {
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
-    console.log('Congratulations, your extension "BibtexSorter" is now active!');
 
     let bibManager = new BibManager();
 
@@ -29,9 +28,20 @@ export function activate(context: ExtensionContext) {
         window.showInformationMessage('Sorting By Key in Descending Order');
     });
 
+    let sortTitleAscending = commands.registerTextEditorCommand('extension.sortTitleAsc',()=>{
+        bibManager.SortEntries(SortType.TitleAsc);
+        window.showInformationMessage('Sorting By Key in Ascending Order');
+    });
+    let sortTitleDescending = commands.registerTextEditorCommand('extension.sortTitleDsc',()=> {
+        bibManager.SortEntries(SortType.TitleDsc);
+        window.showInformationMessage('Sorting By Key in Descending Order');
+    });
+
     context.subscriptions.push(
         sortKeyAscending,
-        sortKeyDescending
+        sortKeyDescending,
+        sortTitleAscending,
+        sortTitleDescending
     );
 }
 
@@ -40,13 +50,22 @@ class BibManager{
     bibEntries: BibEntry[] = [];
 
     constructor(){
-        this.updateBibList();
+        this.UpdateBibList();
     }
 
-    updateBibList(){
+    ResetBibList(){
+        window.showInformationMessage('Resetting List of Entries');
+        this.bibEntries = [];
+    }
+
+    UpdateBibList(){
+        this.ResetBibList();
+
+        window.showInformationMessage('Updating List of Entries');
         let doc = window.activeTextEditor.document;
 
         var regex = /[\t{},]*/g;
+        var whitespace = /[\s]*/g;
         
         if (doc.languageId === "bibtex"){
             //this._statusBarItem.show();
@@ -57,6 +76,7 @@ class BibManager{
             entries.forEach(entry => {
                 var bibEntry = new BibEntry();
                 entry.split("\n").forEach(line => {
+                    line = line.replace("=","");
                     line = line.replace("{","=");
                     line = line.replace(regex, "");
                     //console.log(line);
@@ -66,22 +86,25 @@ class BibManager{
                         bibEntry.type = kv[0];
                         bibEntry.key = kv[1];
                     } else {
-                        switch(kv[0]){
-                            case "title":
-                                bibEntry.title = kv[1];
-                                break;
-                            case "author":
-                                bibEntry.author = kv[1];
-                                break;
-                            case "journal":
-                                bibEntry.journal = kv[1];
-                                break;
-                            case "url":
-                                bibEntry.url = kv[1];
-                                break;
-                            case "year":
-                                bibEntry.year = parseInt(kv[1], 10);
-                                break;
+                        if (kv[0] !== undefined){
+                            var key = kv[0].replace(whitespace, "");
+                            switch(key){
+                                case "title":
+                                    bibEntry.title = kv[1];
+                                    break;
+                                case "author":
+                                    bibEntry.author = kv[1];
+                                    break;
+                                case "journal":
+                                    bibEntry.journal = kv[1];
+                                    break;
+                                case "url":
+                                    bibEntry.url = kv[1];
+                                    break;
+                                case "year":
+                                    bibEntry.year = parseInt(kv[1], 10);
+                                    break;
+                            }
                         }
                     }
                 });
@@ -89,11 +112,13 @@ class BibManager{
                     this.bibEntries.push(bibEntry);
                 }
             });
+
+            //console.log(this.bibEntries);
         }
     }
 
     public SortEntries(sortType : SortType) {
-        this.updateBibList();
+        this.UpdateBibList();
 
         let doc = window.activeTextEditor.document;
         console.log("Sorting Entries");
@@ -117,36 +142,34 @@ class BibManager{
                     return 0;
                 });
                 break;
+            case SortType.TitleAsc:
+                this.bibEntries.sort(function(a,b){
+                    var x = a.title.toLowerCase();
+                    var y = b.title.toLowerCase();
+                    if (x < y) { return -1; }
+                    if (x > y) { return 1; }
+                    return 0;
+                });
+                break;
+            case SortType.TitleDsc:
+                this.bibEntries.sort(function (a, b) {
+                    var x = a.title.toLowerCase();
+                    var y = b.title.toLowerCase();
+                    if (x > y) { return -1; }
+                    if (x < y) { return 1; }
+                    return 0;
+                });
+                break;
         }
 
-        this.updateBibFile();
+        this.UpdateBibFile();
     }
     
-    private sortByKeyAsc(a : BibEntry, b : BibEntry) : number{
-        var x = a.key.toLowerCase();
-        var y = b.key.toLowerCase();
-        if (x < y) { return -1; }
-        if (x > y) { return 1; }
-        return 0;
-    }
-    private sortByKeyDsc(a :  BibEntry, b : BibEntry) : number {
-        var x = a.key.toLowerCase();
-        var y = b.key.toLowerCase();
-        if (x > y) { return -1; }
-        if (x < y) { return 1; }
-        return 0;
-    }
-    
-    updateBibFile(){
+    UpdateBibFile(){
         var out = this.bibEntries.map(bibEntry=>{
         var {type, key, ...rest} = bibEntry;
-        return `@${type}{${key},
-        ${Object.keys(rest).map(
-            (el)=>{return `${el}={${bibEntry[el]}}\n`;}
-                )
-            }
-        }\n`;
-        });
+
+        return `@${type}{${key},\n${Object.keys(rest).map((el)=>{return `\t${el}={${bibEntry[el]}}\n`;})}}\n`;});
         
         var edit = new WorkspaceEdit();
         edit.replace(window.activeTextEditor.document.uri, new Range(0,0, window.activeTextEditor.document.lineCount, window.activeTextEditor.document.eol), out.toString());
