@@ -20,11 +20,11 @@ export function activate(context: ExtensionContext) {
 
     let bibManager = new BibManager();
 
-    let sortKeyAscending = commands.registerTextEditorCommand('extension.sortEntriesAsc',()=>{
+    let sortKeyAscending = commands.registerTextEditorCommand('extension.sortKeyAsc',()=>{
         bibManager.SortEntries(SortType.KeyAsc);
         window.showInformationMessage('Sorting By Key in Ascending Order');
     });
-    let sortKeyDescending = commands.registerTextEditorCommand('extension.sortEntriesDsc',()=> {
+    let sortKeyDescending = commands.registerTextEditorCommand('extension.sortKeyDsc',()=> {
         bibManager.SortEntries(SortType.KeyDsc);
         window.showInformationMessage('Sorting By Key in Descending Order');
     });
@@ -40,6 +40,10 @@ class BibManager{
     bibEntries: BibEntry[] = [];
 
     constructor(){
+        this.updateBibList();
+    }
+
+    updateBibList(){
         let doc = window.activeTextEditor.document;
 
         var regex = /[\t{},]*/g;
@@ -88,57 +92,9 @@ class BibManager{
         }
     }
 
-    public CreateEntry(){
-        var entry = new BibEntry();
-
-        window.showQuickPick(types).then((selection)=>{
-            entry.type = selection;
-            
-            window.showInputBox({prompt:"Bib Key"}).then((key)=>{
-                entry.key = key;
-
-                window.showInputBox({prompt:"Title"}).then((title)=>{
-                    entry.title = title;
-
-                    window.showInputBox({prompt:"Author(s)"}).then((author)=>{
-                        entry.author = author;
-
-                        window.showInputBox({prompt:"Journal"}).then((journal)=>{
-                            entry.journal = journal;
-
-                            window.showInputBox({prompt:"year"}).then((year)=>{
-                                entry.year = parseInt(year, 10);
-
-                                this.bibEntries.push(entry);
-                                this.updateBibFile();
-                            });
-                        });
-                    });
-                });
-            });
-        });
-    }
-    public DeleteEntry(){
-        var keys = [];
-        this.bibEntries.forEach(entry => {
-            keys.push(entry.key);
-        });
-
-        window.showQuickPick(keys).then((selection)=>{
-            console.log(this.bibEntries);
-
-            if (selection !== undefined || selection !== ""){
-                this.bibEntries.forEach((entry, i)=>{
-                    if(selection === entry.key){
-                    }
-                });
-            }
-
-            console.log(this.bibEntries);
-            //this.updateBibFile();
-        });
-    } 
     public SortEntries(sortType : SortType) {
+        this.updateBibList();
+
         let doc = window.activeTextEditor.document;
         console.log("Sorting Entries");
             
