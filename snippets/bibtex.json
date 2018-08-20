@@ -2,44 +2,61 @@
     "article": {
        "prefix": "article",
        "body": [
-            "@article{key,",
-            "   title = {},",
-            "   author = {},",
-            "   journal = {},",
-            "   year = {}",
+            "@article{${1:key},",
+            "   title = {${2:title}},",
+            "   author = {${3:author}},",
+            "   journal = {${4:journal}},",
+            "   year = {${5:year}}",
+            "}"
+       ]
+    },
+    "book": {
+       "prefix": "book",
+       "body": [
+            "@book{${1:key},",
+            "   title = {${2:title}},",
+            "   author = {${3:author}},",
+            "   journal = {${4:journal}},",
+            "   year = {${5:year}}",
             "}"
        ]
     },
     "inproceedings": {
         "prefix": "inproceedings",
         "body": [
-            "@inproceedings{key,",
-            "   title = {},",
-            "   author = {},",
-            "   journal = {},",
-            "   year = {}",
+            "@inproceedings{${1:key},",
+            "   title = {${2:title}},",
+            "   author = {${3:author}},",
+            "   journal = {${4:journal}},",
+            "   year = {${5:year}}",
             "}"
         ]
     },
     "electronic": {
         "prefix": "electronic",
         "body": [
-            "@electronic{key,",
-            "   title = {},",
-            "   author = {},",
-            "   journal = {},",
-            "   year = {}",
+            "@electronic{${1:key},",
+            "   title = {${2:title}},",
+            "   author = {${3:author}},",
+            "   journal = {${4:journal}},",
+            "   year = {${5:year}}",
             "}"
         ]
     },
     "misc": {
         "prefix": "misc",
         "body": [
-            "@misc{key,",
-            "   title = {},",
-            "   howpublished = {},",
-            "   note = {}",
+            "@misc{${1:key},",
+            "   title = {${1:title},",
+            "   howpublished = {$2},",
+            "   note = {$3}",
             "}"
+        ]
+    },
+    "pages":{
+        "prefix":"pages",
+        "body": [
+            "pages = {${1}-${2}}"
         ]
     }
 }
