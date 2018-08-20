@@ -2,7 +2,7 @@
     "name": "bibmanager",
     "displayName": "BibManager - BibTex File Management",
     "description": "VS Code extension for managing BibTex bibliographies",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "author": {
         "name": "Thomas Day",
         "email": "tday42@gmail.com"
@@ -22,6 +22,8 @@
         "vscode": "^1.25.0"
     },
     "categories": [
+        "Formatters",
+        "Snippets",
         "Other"
     ],
     "activationEvents": [
@@ -29,20 +31,12 @@
     ],
     "main": "./out/extension",
     "keywords": [
-        "BibTeX"
+        "BibTeX",
+        "Sorting",
+        "Snippets"
     ],
     "contributes": {
         "commands": [
-            {
-                "command": "extension.createEntry",
-                "category": "BibTex",
-                "title": "Create New Entry"
-            },
-            {
-                "command": "extension.deleteEntry",
-                "category": "BibTex",
-                "title": "Delete Entry"
-            },
             {
                 "command": "extension.sortEntriesAsc",
                 "category": "BibTex",
@@ -52,6 +46,27 @@
                 "command": "extension.sortEntriesDsc",
                 "category": "BibTex",
                 "title": "Sort Entries By Key (Descending)"
+            }
+        ],
+        "languages": [
+            {
+                "id": "bibtex",
+                "extensions": [
+                    ".bib"
+                ]
+            }
+        ],
+        "snippets": [
+            {
+                "language": "bibtex",
+                "path": "./snippets/bibtex.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "bibtex",
+                "scopeName": "text.bibtex",
+                "path": "./syntaxes/bibtex.tmLanguage.json"
             }
         ]
     },

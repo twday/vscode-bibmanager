@@ -16,38 +16,20 @@ enum SortType {
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
-
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
     console.log('Congratulations, your extension "BibtexSorter" is now active!');
 
     let bibManager = new BibManager();
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
-    // The commandId parameter must match the command field in package.json
-    let createEntry = commands.registerTextEditorCommand('extension.createEntry', () => {
-        bibManager.CreateEntry();
-    });
-    let deleteEntry = commands.registerTextEditorCommand('extension.deleteEntry', () => {
-        bibManager.DeleteEntry();
-    });
-    let sortKeyAscending = commands.registerTextEditorCommand('extension.sortEntriesAsc', () => {
-        bibManager.SortEntries(SortType.KeyAsc);
 
-        // Display a message box to the user
+    let sortKeyAscending = commands.registerTextEditorCommand('extension.sortEntriesAsc',()=>{
+        bibManager.SortEntries(SortType.KeyAsc);
         window.showInformationMessage('Sorting By Key in Ascending Order');
     });
-    let sortKeyDescending = commands.registerTextEditorCommand('extension.sortEntriesDsc', () => {
-
+    let sortKeyDescending = commands.registerTextEditorCommand('extension.sortEntriesDsc',()=> {
         bibManager.SortEntries(SortType.KeyDsc);
-
-        // Display a message box to the user
         window.showInformationMessage('Sorting By Key in Descending Order');
     });
 
     context.subscriptions.push(
-        createEntry, 
-        deleteEntry,
         sortKeyAscending,
         sortKeyDescending
     );

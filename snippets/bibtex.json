@@ -1,0 +1,45 @@
+{
+    "article": {
+       "prefix": "article",
+       "body": [
+            "@article{key,",
+            "   title = {},",
+            "   author = {},",
+            "   journal = {},",
+            "   year = {}",
+            "}"
+       ]
+    },
+    "inproceedings": {
+        "prefix": "inproceedings",
+        "body": [
+            "@inproceedings{key,",
+            "   title = {},",
+            "   author = {},",
+            "   journal = {},",
+            "   year = {}",
+            "}"
+        ]
+    },
+    "electronic": {
+        "prefix": "electronic",
+        "body": [
+            "@electronic{key,",
+            "   title = {},",
+            "   author = {},",
+            "   journal = {},",
+            "   year = {}",
+            "}"
+        ]
+    },
+    "misc": {
+        "prefix": "misc",
+        "body": [
+            "@misc{key,",
+            "   title = {},",
+            "   howpublished = {},",
+            "   note = {}",
+            "}"
+        ]
+    }
+}
