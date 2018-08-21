@@ -54,14 +54,11 @@ class BibManager{
     }
 
     ResetBibList(){
-        window.showInformationMessage('Resetting List of Entries');
         this.bibEntries = [];
     }
 
     UpdateBibList(){
         this.ResetBibList();
-
-        window.showInformationMessage('Updating List of Entries');
         let doc = window.activeTextEditor.document;
 
         var regex = /[\t{},]*/g;
@@ -127,8 +124,6 @@ class BibManager{
                     this.bibEntries.push(bibEntry);
                 }
             });
-
-            //console.log(this.bibEntries);
         }
     }
 
@@ -136,7 +131,6 @@ class BibManager{
         this.UpdateBibList();
 
         let doc = window.activeTextEditor.document;
-        console.log("Sorting Entries");
             
         switch(sortType){
             case SortType.KeyAsc:
