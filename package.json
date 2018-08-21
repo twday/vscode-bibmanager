@@ -8,7 +8,7 @@
         "email": "tday42@gmail.com"
     },
     "publisher": "twday",
-    "icon": "./images/bibmanager-icon.png",
+    "icon": "images/bibmanager-icon.png",
     "license": "MIT",
     "homepage": "https://github.com/twday/vscode-bibmanager/blob/master/README.md",
     "bugs": {
