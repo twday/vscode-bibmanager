@@ -1,6 +1,6 @@
 {
     "name": "bibmanager",
-    "displayName": "BibManager - BibTex File Management",
+    "displayName": "BibManager",
     "description": "VS Code extension for managing BibTex bibliographies",
     "version": "1.0.1",
     "author": {
