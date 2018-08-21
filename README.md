@@ -12,7 +12,7 @@
 ## Features
 
 ### Code Snippets
-![Code Snippets](images/features/snippets.gif)
+![Code Snippets](images/features/codesnippets.gif)
 
 ### Sorting Bibliography
 Sorting by Key in ascending order:
@@ -22,6 +22,14 @@ Sorting by Key in ascending order:
 Sorting by key in descending order:
 
 ![Sorting by Key (Descending order)](images/features/sortKeyDsc.gif)
+
+Sorting by title in ascending order:
+
+![Sorting by Title (Ascending order)](images/features/sortTitleAsc.gif)
+
+Sorting by title in descending order:
+
+![Sorting by Title (Descending order)](images/features/sortTitleDsc.gif)
 
 ## Requirements
 
@@ -33,7 +41,8 @@ This extension does not currently include any settings.
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
++ Code snippets only activate when inside a reference declaration, i.e. inside @article{}
++ Sorting places comma at start of each line (Known issue with typescript String literals)
 
 ## Release Notes
 
@@ -42,6 +51,9 @@ Calling out known issues can help limit users opening duplicate issues against y
 Initial release of BibManager
 Features
 + Code Snippets
-+ Sorting bibliography by Key
-    + Ascending order
-    + Descending Order
++ Sorting references by Key
+  + Ascending order
+  + Descending Order
++ Sorting references by Title
+  + Ascending Order
+  + Descending Order

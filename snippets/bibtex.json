@@ -81,9 +81,16 @@
     },
     "Pages of References":{
         "scope": "bibtex, latex",
-        "prefix":"pages",
+        "prefix": "pages",
         "body": [
             "pages = {${1}-${2}}"
+        ]
+    },
+    "Year of the Publication":{
+        "scope": "bibtex, latex",
+        "prefix": "year",
+        "body":[
+            "year = {${1:year}}"
         ]
     }
 }

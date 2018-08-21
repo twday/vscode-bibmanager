@@ -98,11 +98,26 @@ class BibManager{
                                 case "journal":
                                     bibEntry.journal = kv[1];
                                     break;
+                                case "booktitle":
+                                    bibEntry.booktitle = kv[1];
+                                    break;
+                                case "publisher":
+                                    bibEntry.publisher = kv[1];
+                                    break;
+                                case "number": 
+                                    bibEntry.number = kv[1];
+                                    break;
+                                case "volume":
+                                    bibEntry.volume = parseInt(kv[1], 10);
+                                    break;
                                 case "url":
                                     bibEntry.url = kv[1];
                                     break;
                                 case "year":
                                     bibEntry.year = parseInt(kv[1], 10);
+                                    break;
+                                case "organization":
+                                    bibEntry.organization = kv[1];
                                     break;
                             }
                         }
@@ -183,12 +198,18 @@ class BibManager{
 
 class BibEntry{
     key : String;
-    url : String;
     type : String;
     title : String;
     author : String;
     journal : String;
+    booktitle : String;
+    pages : String;
+    number : String;
+    volume : number;
     year : number;
+    url : String;
+    publisher : String;
+    organization : String;
 }
 
 // this method is called when your extension is deactivated
