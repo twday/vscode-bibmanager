@@ -46,6 +46,13 @@ This extension does not currently include any settings.
 
 ## Release Notes
 
+### 1.0.2
+Updated code snippets
+
+### 1.0.1
+Updated extension name
+Removed unnecessary information messages
+
 ### 1.0.0
 
 Initial release of BibManager
