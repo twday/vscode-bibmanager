@@ -7,7 +7,86 @@
             "   title = {${2:title}},",
             "   author = {${3:author}},",
             "   journal = {${4:journal}},",
-            "   year = {${5:year}}",
+            "   pages = {${5:pages}},",
+            "   number = {${6:number},",
+            "   volume = {${7:volume}},",
+            "   month = {${8:month}},",
+            "   year = {${9:year}},",
+            "   note = {${10:An optional note}},", 
+            "}"
+        ]
+    },
+    "Booklet Reference": {
+        "scope": "bibtex, latex",
+        "prefix": "booklet",
+        "body":[
+            "@booklet{${1:key},",
+            "   title = {${2:title}},",
+            "   author = {${3:author}},", 
+            "   howpublished = {${4},",
+            "   month = {${5:month}},",
+            "   year = {${6:year}},",
+            "   note = {${7:An optional note}},",
+            "}"
+        ]
+    },
+    "Conference Reference": {
+        "scope": "bibtex, latex",
+        "prefix": "conference",
+        "body": [
+            "@conference{${1:key},",
+            "   title = {${2:title}},",
+            "   author = {${3:author}},",
+            "   booktitle = {${4:booktitle}},",
+            "   year = {${5:year}},",
+            "   editor = {${6:editor}},",
+            "   volume = {${7:volume}},",
+            "   series = {${8:series}},",
+            "   pages = {${9:pages}},",
+            "   month = {${10:month}},",
+            "   organization = {${11:organization}},",
+            "   publisher = {${12:publisher}},",
+            "   note = {${13:An optional note}},",
+            "}"
+        ]
+    },
+    "In Book": {
+        "scope": "bibtex, latex",
+        "prefix": "inbook",
+        "body": [
+            "@inbook{${1:key}",
+            "   title = {${2:title}},",
+            "   author = {${3:author}},", 
+            "   chapter = {${4:chapter}},",
+            "   pages = {${5:pages}},",
+            "   publisher = {${6:publisher}},",
+            "   volume = {${8:volume}},",
+            "   series = {${9:series}},",
+            "   edition = {${10:edition}},",
+            "   month = {${11:month}},",
+            "   year = {${7:year}},",
+            "   note = {${12:An optional note}},",
+            "}"
+        ]
+    },
+    "In Collection": {
+        "scope": "bibtex, latex",
+        "prefix": "incollection",
+        "body": [
+            "@incollection{${1:key},",
+            "   title = {${2:title}},",
+            "   author = {${3:author}},", 
+            "   booktitle = {${4:booktitle}},",
+            "   publisher = {${5:publisher}},",
+            "   year = {${6:year}},",
+            "   editor = {${7:editor}},",
+            "   volume = {${8:volume}},",
+            "   series = {${9:series}},",
+            "   chapter = {${10:chapter}},",
+            "   pages = {${11:pages}},",
+            "   edition = {${12:edition}},",
+            "   month = {${13:month}},",
+            "   note = {${14:An optional note}},",
             "}"
         ]
     },
@@ -19,7 +98,14 @@
             "   title = {${2:title}},",
             "   author = {${3:author}},",
             "   journal = {${4:journal}},",
-            "   year = {${5:year}}",
+            "   publisher = {${5:publisher}},",
+            "   volume = {${6:volume}},",
+            "   series = {${7:series}},",
+            "   edition = {${8:edition}},",
+            "   month {${9:month}},",
+            "   year = {${10:year}}",
+            "   isbn = {${11:isbn}},",
+            "   note = {${12:An optional note},",
             "}"
         ]
     },
@@ -32,6 +118,13 @@
             "   author = {${3:author}},",
             "   journal = {${4:journal}},",
             "   year = {${5:year}}",
+            "   editor = {${6:editor}},",
+            "   volume = {${7:volume}},",
+            "   series = {${8:series}},",
+            "   month = {${9:month}},",
+            "   organization = {${10:organization}},",
+            "   publisher = {${11:publisher}},",
+            "   note = {${12:An optional note}},",
             "}"
         ]
     },
@@ -54,8 +147,11 @@
             "@misc{${1:key},",
             "   title = {${2:title},",
             "   howpublished = {$3},",
-            "   note = {$4}",
+            "   month = {${4:month}},",
+            "   year = {${5:year}},",
+            "   note = {$6},",
             "}"
+
         ]
     },
     "Title of the Paper":{
