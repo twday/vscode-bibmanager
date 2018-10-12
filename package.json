@@ -2,7 +2,7 @@
     "name": "bibmanager",
     "displayName": "BibManager",
     "description": "VS Code extension for managing BibTex bibliographies",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "author": {
         "name": "Thomas Day",
         "email": "tday42@gmail.com"
