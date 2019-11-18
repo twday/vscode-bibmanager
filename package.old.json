@@ -36,6 +36,28 @@
         "Snippets"
     ],
     "contributes": {
+        "commands": [
+            {
+                "command": "extension.sortKeyAsc",
+                "category": "BibTex",
+                "title": "Sort Entries By Key (Ascending)"
+            },
+            {
+                "command": "extension.sortKeyDsc",
+                "category": "BibTex",
+                "title": "Sort Entries By Key (Descending)"
+            },
+            {
+                "command": "extension.sortTitleAsc",
+                "category": "BibTex",
+                "title": "Sort Entries By Title (Ascending)"
+            },
+            {
+                "command": "extension.sortTitleDsc",
+                "category": "BibTex",
+                "title": "Sort Entries By Title (Descending)"
+            }
+        ],
         "snippets": [
             {
                 "language": "bibtex",

@@ -14,6 +14,7 @@
 ### Code Snippets
 ![Code Snippets](images/features/codesnippets.gif)
 
+<!--
 ### Sorting Bibliography
 Sorting by Key in ascending order:
 
@@ -30,7 +31,7 @@ Sorting by title in ascending order:
 Sorting by title in descending order:
 
 ![Sorting by Title (Descending order)](images/features/sortTitleDsc.gif)
-
+-->
 ## Requirements
 
 This extension does not require any additional extensions to be installed.
@@ -45,6 +46,9 @@ This extension does not currently include any settings.
 + Sorting places comma at start of each line (Known issue with typescript String literals)
 
 ## Release Notes
+
+### 1.0.3
+Disabled Sorting temporarily
 
 ### 1.0.2
 Updated code snippets
