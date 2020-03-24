@@ -1,7 +1,19 @@
-'use strict';
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import {window, commands, ExtensionContext, workspace, WorkspaceEdit, Range} from 'vscode';
+import * as path from 'path';
+import {
+    Range,
+    window, 
+    commands, 
+    workspace, 
+    WorkspaceEdit,
+    ExtensionContext
+} from 'vscode';
+
+import {
+    LanguageClient,
+    LanguageClientOptions,
+    ServerOptions,
+    TransportKind,
+} from 'vscode-languageclient';
 
 var types = ['electronic', 'article', 'inproceedings', 'misc'];
 enum SortType {
@@ -13,9 +25,49 @@ enum SortType {
     AuthorDsc
 }
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-export function activate(context: ExtensionContext) {
+let client: LanguageClient;
+
+export function activate(context: ExtensionContext){
+    let serverModule = context.asAbsolutePath(
+        path.join('server', 'out', 'server.js')
+    );
+
+    let debugOptions = {
+        execArgv: ['--nolazy', '--inspect=6009']
+    };
+
+    let serverOptions: ServerOptions = {
+        run: {
+            module: serverModule,
+            transport: TransportKind.ipc
+        },
+        debug: {
+            module: serverModule,
+            transport: TransportKind.ipc,
+            options: debugOptions
+        }
+    };
+
+    let clientOptions: LanguageClientOptions = {
+        documentSelector: [
+            {
+                scheme: 'file',
+                language: 'bibtex'
+            }
+        ],
+        synchronize: {
+            fileEvents: workspace.createFileSystemWatcher('**/*.bib')
+        }
+    };
+
+    client = new LanguageClient(
+        'bibManagerServer',
+        'BibTeX Language Server',
+        serverOptions,
+        clientOptions
+    );
+
+    client.start();
 
     let bibManager = new BibManager();
 
@@ -43,6 +95,14 @@ export function activate(context: ExtensionContext) {
         sortTitleAscending,
         sortTitleDescending
     );
+}
+
+export function deactivate(): Thenable<void> | undefined {
+    if(!client){
+        return undefined;
+    }
+
+    return client.stop();
 }
 
 class BibManager{
@@ -204,8 +264,4 @@ class BibEntry{
     url : String;
     publisher : String;
     organization : String;
-}
-
-// this method is called when your extension is deactivated
-export function deactivate() {
 }

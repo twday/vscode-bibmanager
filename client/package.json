@@ -1,0 +1,28 @@
+{
+    "name": "bibmanager-client",
+    "description": "VSCode part of BibTeX Language Server",
+    "version": "1.0.0",
+    "author": {
+        "name": "Thomas Day",
+        "email": "tday42@gmail.com"
+    },
+    "license": "MIT",
+    "publisher": "twday",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/twday/vscode-bibmanager.git"
+    },
+    "engines": {
+        "vscode": "^1.33.0"
+    },
+    "scripts": {
+        "update-vscode": "vscode-install",
+        "postinstall": "vscode-install"
+    },
+    "dependencies": {
+        "vscode-languageclient": "^5.2.1"
+    },
+    "devDependencies": {
+        "vscode": "^1.1.35"
+    }
+}

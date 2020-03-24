@@ -2,7 +2,7 @@
     "name": "bibmanager",
     "displayName": "BibManager",
     "description": "VS Code extension for managing BibTex bibliographies",
-    "version": "1.0.3",
+    "version": "2.0.0",
     "author": {
         "name": "Thomas Day",
         "email": "tday42@gmail.com"
@@ -19,7 +19,7 @@
         "url": "https://github.com/twday/vscode-bibmanager.git"
     },
     "engines": {
-        "vscode": "^1.25.0"
+        "vscode": "^1.33.0"
     },
     "categories": [
         "Formatters",
@@ -29,13 +29,36 @@
     "activationEvents": [
         "onLanguage:bibtex"
     ],
-    "main": "./out/extension",
+    "main": "./client/out/extension",
     "keywords": [
         "BibTeX",
         "Sorting",
         "Snippets"
     ],
     "contributes": {
+        "configuration": {
+            "type": "object",
+            "title": "BibTeX Manager",
+            "properties": {
+                "bibtexManager.maxNumberOfProblems": {
+                    "scope": "resource",
+                    "type": "number",
+                    "default": 100,
+                    "description": "Controls the maximum number of problems produced by the server."
+                },
+                "bibtexManager.trace.server": {
+                    "scope": "window",
+                    "type": "string",
+                    "enum": [
+                        "off",
+                        "messages",
+                        "verbose"
+                    ],
+                    "default": "off",
+                    "description": "Traces the communication between VS Code and the language server."
+                }
+            }
+        },
         "snippets": [
             {
                 "language": "bibtex",
@@ -51,17 +74,16 @@
         ]
     },
     "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+        "vscode:prepublish": "cd ./client && npm run update-vscode && cd .. && npm run compile",
+        "compile": "tsc -b",
+        "watch": "tsc -b -w",
+        "postinstall": "cd ./client && npm install && cd ../server && npm install && cd ..",
+        "test": "sh ./scripts/e2e.sh"
     },
     "devDependencies": {
-        "typescript": "^2.6.1",
-        "vscode": "^1.1.6",
-        "tslint": "^5.8.0",
-        "@types/node": "^7.0.43",
-        "@types/mocha": "^2.2.42"
+        "typescript": "^3.6.4",
+        "tslint": "^5.16.0",
+        "@types/node": "^12.11.7",
+        "@types/mocha": "^5.2.7"
     }
 }
