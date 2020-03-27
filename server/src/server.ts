@@ -10,15 +10,29 @@ import{
     CompletionItem,
     CompletionItemKind,
     TextDocumentPositionParams,
+    MarkupKind,
+    InsertTextFormat,
+    CodeAction,
+    TextEdit,
+    CodeActionKind,
+    FormattingOptions,
+    WorkspaceEdit,
+    Position,
 } from 'vscode-languageserver';
-import { connect } from 'http2';
 
+import citeDefinitions from './definitions.json';
+import { ClientRequest } from 'http';
 
 let connection = createConnection(ProposedFeatures.all);
 let documents: TextDocuments = new TextDocuments();
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
+let hasDocumentOnTypeFormattingCapability: boolean = false;
 let hasDiagnosticsRelatedInformationCapability: boolean = false;
+
+let citeTypes: any = citeDefinitions;
+
+let codeActions: CodeAction[] = [];
 
 connection.onInitialize((params: InitializeParams) => {
     let capabilities = params.capabilities;
@@ -37,11 +51,20 @@ connection.onInitialize((params: InitializeParams) => {
         capabilities.textDocument.publishDiagnostics.relatedInformation
     );
 
+    hasDocumentOnTypeFormattingCapability = !!(
+        capabilities.textDocument &&
+        capabilities.textDocument.formatting
+    );
+
     return {
         capabilities: {
             textDocumentSync: documents.syncKind,
             completionProvider: {
-                resolveProvider: true
+                resolveProvider: true,
+            },
+            codeActionProvider: true,
+            documentOnTypeFormattingProvider: {
+                firstTriggerCharacter: ",",
             }
         }
     };
@@ -62,12 +85,13 @@ interface BibManagerSettings {
     maxNumberOfProblems: number;
 }
 
-const defaultSettings: BibManagerSettings = {maxNumberOfProblems: 1000};
+const defaultSettings: BibManagerSettings = {maxNumberOfProblems: 100};
 let globalSettings: BibManagerSettings = defaultSettings;
 
 let documentSettings: Map<string, Thenable<BibManagerSettings>> = new Map();
 
 connection.onDidChangeConfiguration(change => {
+
     if (hasConfigurationCapability){
         documentSettings.clear();
     } else {
@@ -79,6 +103,20 @@ connection.onDidChangeConfiguration(change => {
     documents.all().forEach(validateTextDocument);
 });
 
+connection.onDocumentOnTypeFormatting((params) => {
+    let document = documents.get(params.textDocument.uri);
+    let options: FormattingOptions = {
+        tabSize: 1,
+        insertSpaces: true,
+        insertFinalNewline: true,
+        trimTrailingWhitespace: false,
+    };
+    return [
+
+    ];
+});
+
+
 function getDocumentSettings(resource: string): Thenable<BibManagerSettings>{
     if (!hasConfigurationCapability){
         return Promise.resolve(globalSettings);
@@ -88,11 +126,11 @@ function getDocumentSettings(resource: string): Thenable<BibManagerSettings>{
     if (!result){
         result = connection.workspace.getConfiguration({
             scopeUri: resource,
-            section: 'bibManagerServer'
+            section: 'bibtexManager'
         });
         documentSettings.set(resource, result);
     }
-
+    
     return result;
 }
 
@@ -101,61 +139,167 @@ documents.onDidClose((e: { document: { uri: string; }; }) => {
 });
 
 documents.onDidChangeContent((change: { document: TextDocument; }) => {
-    connection.console.log("onDidChangeContent-Fired");
     validateTextDocument(change.document);
-    connection.console.log("onDidChangeContent-End");
 });
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-    connection.console.log("Getting Settings");
     let settings = await getDocumentSettings(textDocument.uri);
-    connection.console.log("Settings Retreived");
 
     let text = textDocument.getText();
-    connection.console.log(text);
-    let pattern = /@\w*{\w*,\n?(\t\w*(=|:)("|{)\w*("|}),\n?)*}/gmi;
-    let m: RegExpExecArray | null;
+    let citePattern = /(?:@(\w*){(\w*),\s*(?:(?:\s*\w*)(?:\s?=\s?)?(?:(?:"|{)?\w*(?:"|})?),?)*\s}?)/g;
+    let citeQuery: RegExpExecArray | null;
 
     let problems = 0;
     let diagnostics: Diagnostic[] = [];
-    connection.console.log(pattern.test(text)+"");
-    while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems){
-        problems++;
-        let diagnostic: Diagnostic = {
-            severity: DiagnosticSeverity.Warning,
-            range: {
-                start: textDocument.positionAt(m.index),
-                end: textDocument.positionAt(m.index + m[0].length)
-            },
-            message: '${m[0]} is all uppercase',
-            source: 'ex'
-        };
-        if (hasDiagnosticsRelatedInformationCapability){
-            diagnostic.relatedInformation = [
-                {
-                    location: {
-                        uri: textDocument.uri,
-                        range: Object.assign({}, diagnostic.range)
-                    },
-                    message: 'Spelling matters'
+    while ((citeQuery = citePattern.exec(text)) && problems < settings.maxNumberOfProblems){
+        let citeType = citeTypes.hasOwnProperty(citeQuery[1]);
+        let citation = citeTypes[citeQuery[1]];
+        if (!citeType){
+            problems++;
+            let citeDiagnostic : Diagnostic = {
+                severity: DiagnosticSeverity.Error,
+                range: {
+                    start: textDocument.positionAt(citeQuery.index + 1),
+                    end: textDocument.positionAt((citeQuery.index + 1)+ citeQuery[1].length),
                 },
-                {
-                    location: {
-                        uri: textDocument.uri,
-                        range: Object.assign({}, diagnostic.range)
-                    },
-                    message: 'Particularly for names'
-                }
-            ];
+                message: citeQuery[1] + ' is not recognised',
+                source: 'BibTeX'
+            };
+            if (hasDiagnosticsRelatedInformationCapability){
+                citeDiagnostic.relatedInformation = [
+                    {
+                        location: {
+                            uri: textDocument.uri,
+                            range: Object.assign({}, citeDiagnostic.range)
+                        },
+                        message: 'This citation type is not supported'
+                    }
+                ];
+            }
+            diagnostics.push(citeDiagnostic);
+        } else if (citeQuery[2].length === 0){
+            let keyDiagnostic : Diagnostic = {
+                severity: DiagnosticSeverity.Error,
+                range: {
+                    start: textDocument.positionAt(citeQuery.index + citeQuery[1].length + 1),
+                    end: textDocument.positionAt((citeQuery.index + citeQuery[1].length + 1) + citeQuery[2].length),
+                },
+                message: 'Key is missing',
+                source: 'BibTeX'
+            };
+            if (hasDiagnosticsRelatedInformationCapability){
+                keyDiagnostic.relatedInformation = [
+                    {
+                        location: {
+                            uri: textDocument.uri,
+                            range: Object.assign({}, keyDiagnostic.range)
+                        },
+                        message: 'Key is missing from "' + citeQuery[1] + '"',
+                    }
+                ];
+            }
+            diagnostics.push(keyDiagnostic);
         }
-        diagnostics.push(diagnostic);
+        
+        let fieldPattern = /(?:(\w*)\s?=\s?(?:"|{|)(\w*)(?:"|}|))+/g;
+        let fieldQuery: RegExpExecArray | null;
+        while ((fieldQuery = fieldPattern.exec(citeQuery[0])) && problems < settings.maxNumberOfProblems){
+            let fieldInEntry = citation.hasOwnProperty(fieldQuery[1]);
+            if (!fieldInEntry){
+                let fieldDiagnostic: Diagnostic = {
+                    severity: DiagnosticSeverity.Information,
+                    range: {
+                        start: textDocument.positionAt(citeQuery.index + fieldQuery.index),
+                        end: textDocument.positionAt(citeQuery.index + fieldQuery.index + fieldQuery[1].length),
+                    },
+                    message: fieldQuery[1] + ' not in Entry Type: @' + citeQuery[1] + '',
+                    source: 'BibTeX'
+                };
+                if (hasDiagnosticsRelatedInformationCapability){
+                    fieldDiagnostic.relatedInformation = [
+                        {
+                            location: {
+                                uri: textDocument.uri,
+                                range: Object.assign({}, fieldDiagnostic.range)
+                            },
+                            message: fieldQuery[1] + " is not a required or optional field for this type of citation"
+                        }
+                    ];
+                }
+                let fieldEdit : TextEdit[] = [
+                    {
+                        range: {
+                            start: textDocument.positionAt(citeQuery.index + fieldQuery.index),
+                            end: textDocument.positionAt(Number.MAX_VALUE)
+                        },
+                        newText: 'Test'
+                    }
+                ];
+                diagnostics.push(fieldDiagnostic);
+                let fieldAction: CodeAction = {
+                    title: 'Remove Unnecessary Field',
+                    kind: CodeActionKind.QuickFix,
+                    diagnostics: [fieldDiagnostic],
+                    edit: {
+                        changes: {
+                            textEdit: fieldEdit
+                        }
+                    }
+                };
+                codeActions.push(fieldAction);
+            }
+            if (fieldQuery[2].length === 0){
+                let fieldValueDiagnostic: Diagnostic = {
+                    severity: DiagnosticSeverity.Information,
+                    range: {
+                        start: textDocument.positionAt(citeQuery.index + fieldQuery.index),
+                        end: textDocument.positionAt(Number.MAX_VALUE),
+                    },
+                    message: fieldQuery[1] + ' is empty',
+                    source: 'BibTeX'
+                };
+                if (hasDiagnosticsRelatedInformationCapability){
+                    fieldValueDiagnostic.relatedInformation = [
+                        {
+                            location: {
+                                uri: textDocument.uri,
+                                range: Object.assign({}, fieldValueDiagnostic.range)
+                            },
+                            message: fieldQuery[1] + " has no value."
+                        }
+                    ];
+                }
+                diagnostics.push(fieldValueDiagnostic);
+                let fieldValueEdit : TextEdit[] = [
+                    {
+                        range: {
+                            start: textDocument.positionAt(citeQuery.index + fieldQuery.index),
+                            end: textDocument.positionAt(citeQuery.index + fieldQuery.index + fieldQuery[0].length)
+                        },
+                        newText: ''
+                    }
+                ];
+                diagnostics.push(fieldValueDiagnostic);
+                let fieldValueAction: CodeAction = {
+                    title: 'Remove Empty Field',
+                    kind: CodeActionKind.QuickFix,
+                    diagnostics: [fieldValueDiagnostic],
+                };
+                codeActions.push(fieldValueAction);
+            }
+        }
     }
-
+    
     connection.sendDiagnostics({
         uri: textDocument.uri,
         diagnostics
     });
+
 }
+
+connection.onCodeAction((params) => {
+    return codeActions;
+});
 
 // Monitored files changed in VSCode
 connection.onDidChangeWatchedFiles(_change => {
@@ -165,82 +309,143 @@ connection.onDidChangeWatchedFiles(_change => {
 // Provides initial list of completion items
 connection.onCompletion(
     (_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
+
+        let textDocument = documents.get(_textDocumentPosition.textDocument.uri);
+
+        return getCompletionItems(textDocument, _textDocumentPosition.position);
+
         return [
             {
-                label: 'entry',
-                kind: CompletionItemKind.Snippet,
-                data: 0
-            },
-            {
                 label: 'author',
-                kind: CompletionItemKind.Snippet,
-                data: 1
+                kind: CompletionItemKind.Text,
+                insertText: 'author = {${1:author}}',
+                insertTextFormat: InsertTextFormat.Snippet,
+                data: 'author'
             },
             {
                 label: 'journal',
-                kind: CompletionItemKind.Snippet,
+                kind: CompletionItemKind.Text,
+                insertText: 'journal = {${1:journal}}',
+                insertTextFormat: InsertTextFormat.Snippet,
                 data: 2
             },
             {
                 label: 'year',
-                kind: CompletionItemKind.Snippet,
+                kind: CompletionItemKind.Text,
+                insertText: 'year = ${1:year}',
+                insertTextFormat: InsertTextFormat.Snippet,
                 data: 3
             },
             {
                 label: 'title',
-                kind: CompletionItemKind.Snippet,
+                kind: CompletionItemKind.Text,
+                insertText: 'title = {${1:title}}',
+                insertTextFormat: InsertTextFormat.Snippet,
                 data: 4
             },
             {
                 label: 'booktitle',
-                kind: CompletionItemKind.Snippet,
+                kind: CompletionItemKind.Text,
+                insertText: 'booktitle = {${1:booktitle}}',
+                insertTextFormat: InsertTextFormat.Snippet,
                 data: 5
             },
             {
                 label: 'pages',
-                kind: CompletionItemKind.Snippet,
+                kind: CompletionItemKind.Text,
+                insertText: 'pages = ${1:start}-${2:end}',
+                insertTextFormat: InsertTextFormat.Snippet,
                 data: 6
             },
             {
                 label: 'number',
-                kind: CompletionItemKind.Snippet,
+                kind: CompletionItemKind.Text,
+                insertText: 'number = ${1:number}',
+                insertTextFormat: InsertTextFormat.Snippet,
                 data: 7
             },
             {
                 label: 'volume',
-                kind: CompletionItemKind.Snippet,
+                kind: CompletionItemKind.Text,
+                insertText: 'volume = ${1:volume}',
+                insertTextFormat: InsertTextFormat.Snippet,
                 data: 8
             },
             {
                 label: 'url',
-                kind: CompletionItemKind.Snippet,
+                kind: CompletionItemKind.Text,
+                insertText: 'url = {$1:url}',
+                insertTextFormat: InsertTextFormat.Snippet,
                 data: 9
             },
             {
                 label: 'publisher',
-                kind: CompletionItemKind.Snippet,
+                kind: CompletionItemKind.Text,
+                insertText: 'publisher = {${1:publisher}}',
+                insertTextFormat: InsertTextFormat.Snippet,
                 data: 10
             },
             {
                 label: 'organization',
-                kind: CompletionItemKind.Snippet,
+                kind: CompletionItemKind.Text,
+                insertText: 'organization = {${1:organization}}',
+                insertTextFormat: InsertTextFormat.Snippet,
                 data: 11
             }
         ];
     }
 );
 
+function getCompletionItems(textDocument : TextDocument | undefined, position : Position) : CompletionItem[]{
+    let items : CompletionItem[] = [];
+    let pattern = /(?:@(\w*){(\w*),\s*(?:(?:\s*\w*)(?:\s?=\s?)?(?:(?:"|{)?\w*(?:"|})?),?)*\s}?)/g;
+    let query : RegExpExecArray | null;
+
+    if (textDocument === undefined){
+        return [];
+    }
+
+    while(query = pattern.exec(textDocument?.getText())){
+        let validEntry = citeTypes.hasOwnProperty(query[1]);
+        
+        if (validEntry){
+            let inRelevantBlock = (
+                position.line > textDocument.positionAt(query.index).line &&
+                position.line < textDocument.positionAt(query.index + query[0].length).line
+            );
+            if (inRelevantBlock){
+                let entryDef = citeTypes[query[1]];
+                connection.console.log(query[1]);
+                let fields = Object.getOwnPropertyNames(entryDef);
+                fields.forEach((value, index) => {
+                    let item : CompletionItem = {
+                        label: value,
+                        kind: CompletionItemKind.Snippet,
+                        insertText: value + ' = {${1:' + value + '}}',
+                        insertTextFormat: InsertTextFormat.Snippet,
+                        data: value
+                    };
+                    items.push(item);
+                });
+            }
+        }
+    }
+
+    return items;
+}
+
 // Handles additional information for item selected in completion list
 connection.onCompletionResolve(
     (item: CompletionItem): CompletionItem => {
         switch (item.data){
-            case 0:
-                item.detail = 'BibTeX Entry';
-                item.documentation = 'An entry in a BibTex file';
-                break;
             case 1:
                 item.detail = 'Author';
-                item.documentation = 'The Author of the citation';
+                item.documentation = {
+                    kind: MarkupKind.Markdown,
+                    value: [
+                        '# Author of the publication'
+                    ].join('\n')
+                };
                 break;
             case 2:
                 item.detail = 'Journal';

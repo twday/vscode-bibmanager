@@ -5,7 +5,11 @@ import {
     commands, 
     workspace, 
     WorkspaceEdit,
-    ExtensionContext
+    ExtensionContext,
+    CodeAction,
+    ProviderResult,
+    Diagnostic,
+    CodeActionContext
 } from 'vscode';
 
 import {
@@ -13,6 +17,7 @@ import {
     LanguageClientOptions,
     ServerOptions,
     TransportKind,
+    Command,
 } from 'vscode-languageclient';
 
 var types = ['electronic', 'article', 'inproceedings', 'misc'];
@@ -56,7 +61,32 @@ export function activate(context: ExtensionContext){
             }
         ],
         synchronize: {
+            configurationSection: 'bibtexManager',
             fileEvents: workspace.createFileSystemWatcher('**/*.bib')
+        },
+        diagnosticCollectionName: 'BibTeX',
+        initializationFailedHandler: (error) => {
+            client.error('Server Initialization Failed.', error);
+            client.outputChannel.show(true);
+            return false;
+        },
+        middleware: {
+            provideCodeActions: (document, range, context, token, next): ProviderResult<(Command | CodeAction)[]> => {
+                if (!context.diagnostics || context.diagnostics.length === 0){
+                    return [];
+                }
+                let bibTeXDiagnostics: Diagnostic[] = [];
+                for (let diagnostic of context.diagnostics){
+                    if (diagnostic.source === 'BibTeX'){
+                        bibTeXDiagnostics.push(diagnostic);
+                    }
+                }
+                if (bibTeXDiagnostics.length === 0){
+                    return [];
+                }
+                let newContext: CodeActionContext = Object.assign({}, context, { diagnostics: bibTeXDiagnostics } as CodeActionContext);
+                return next(document, range, newContext, token);
+            }
         }
     };
 
@@ -67,7 +97,10 @@ export function activate(context: ExtensionContext){
         clientOptions
     );
 
-    client.start();
+    client.registerProposedFeatures();
+    client.onReady().then(() => {
+        
+    });
 
     let bibManager = new BibManager();
 
@@ -90,6 +123,7 @@ export function activate(context: ExtensionContext){
     });
 
     context.subscriptions.push(
+        client.start(),
         sortKeyAscending,
         sortKeyDescending,
         sortTitleAscending,

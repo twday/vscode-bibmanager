@@ -16,6 +16,26 @@
             "}"
         ]
     },
+    "Book Reference": {
+        "scope": "bibtex, latex",
+        "prefix": "book",
+        "body": [
+            "@book{${1:key},",
+            "\ttitle = {${2:title}},",
+            "\tauthor = {${3:author}},",
+            "\teditor = {${4:editor}},",
+            "\tpublisher = {${5:publisher}},",
+            "\tvolume = {${6:volume}},",
+            "\tnumber = {${7:number},",
+            "\tseries = {${8:series}},",
+            "\tedition = {${9:edition}},",
+            "\tmonth {${10:month}},",
+            "\tyear = {${11:year}}",
+            "\taddress= = {${12:address}}",
+            "\tnote = {${13:An optional note},",
+            "}"
+        ]
+    },
     "Booklet Reference": {
         "scope": "bibtex, latex",
         "prefix": "booklet",
@@ -23,10 +43,11 @@
             "@booklet{${1:key},",
             "\ttitle = {${2:title}},",
             "\tauthor = {${3:author}},",
-            "\thowpublished = {${4},",
+            "\thowpublished = {${4:howpublished},",
             "\tmonth = {${5:month}},",
             "\tyear = {${6:year}},",
-            "\tnote = {${7:An optional note}},",
+            "\taddress = {${7:address}},",
+            "\tnote = {${8:An optional note}},",
             "}"
         ]
     },
@@ -41,12 +62,14 @@
             "\tyear = {${5:year}},",
             "\teditor = {${6:editor}},",
             "\tvolume = {${7:volume}},",
-            "\tseries = {${8:series}},",
-            "\tpages = {${9:pages}},",
-            "\tmonth = {${10:month}},",
-            "\torganization = {${11:organization}},",
-            "\tpublisher = {${12:publisher}},",
-            "\tnote = {${13:An optional note}},",
+            "\tnumber = {${8:number}},",
+            "\tseries = {${9:series}},",
+            "\tpages = {${10:pages}},",
+            "\taddress= = {${11:address}}",
+            "\tmonth = {${12:month}},",
+            "\torganization = {${13:organization}},",
+            "\tpublisher = {${14:publisher}},",
+            "\tnote = {${15:An optional note}},",
             "}"
         ]
     },
@@ -57,15 +80,18 @@
             "@inbook{${1:key}",
             "\ttitle = {${2:title}},",
             "\tauthor = {${3:author}},",
-            "\tchapter = {${4:chapter}},",
-            "\tpages = {${5:pages}},",
-            "\tpublisher = {${6:publisher}},",
+            "\teditor = {${4:editor}},",
+            "\tchapter = {${5:chapter}},",
+            "\tpages = {${6:pages}},",
+            "\tpublisher = {${7:publisher}},",
             "\tvolume = {${8:volume}},",
-            "\tseries = {${9:series}},",
-            "\tedition = {${10:edition}},",
-            "\tmonth = {${11:month}},",
-            "\tyear = {${7:year}},",
-            "\tnote = {${12:An optional note}},",
+            "\tnumber = {${9:number}},",
+            "\tseries = {${10:series}},",
+            "\ttype = {${11:type}},",
+            "\tedition = {${12:edition}},",
+            "\tmonth = {${13:month}},",
+            "\tyear = {${14:year}},",
+            "\tnote = {${15:An optional note}},",
             "}"
         ]
     },
@@ -90,25 +116,6 @@
             "}"
         ]
     },
-    "Book Reference": {
-        "scope": "bibtex, latex",
-        "prefix": "book",
-        "body": [
-            "@book{${1:key},",
-            "\ttitle = {${2:title}},",
-            "\tauthor = {${3:author}},",
-            "\tjournal = {${4:journal}},",
-            "\tpublisher = {${5:publisher}},",
-            "\tvolume = {${6:volume}},",
-            "\tseries = {${7:series}},",
-            "\tedition = {${8:edition}},",
-            "\tmonth {${9:month}},",
-            "\tyear = {${10:year}}",
-            "\tisbn = {${11:isbn}},",
-            "\tnote = {${12:An optional note},",
-            "}"
-        ]
-    },
     "Reference in proceedings": {
         "scope": "bibtex, latex",
         "prefix": "inproceedings",
@@ -116,27 +123,18 @@
             "@inproceedings{${1:key},",
             "\ttitle = {${2:title}},",
             "\tauthor = {${3:author}},",
-            "\tjournal = {${4:journal}},",
-            "\tyear = {${5:year}}",
+            "\tbooktitle = {${4:booktitle}},",
+            "\tyear = {${5:year}},",
             "\teditor = {${6:editor}},",
             "\tvolume = {${7:volume}},",
-            "\tseries = {${8:series}},",
-            "\tmonth = {${9:month}},",
-            "\torganization = {${10:organization}},",
-            "\tpublisher = {${11:publisher}},",
-            "\tnote = {${12:An optional note}},",
-            "}"
-        ]
-    },
-    "Electronic Reference": {
-        "scope": "bibtex, latex",
-        "prefix": "electronic",
-        "body": [
-            "@electronic{${1:key},",
-            "\ttitle = {${2:title}},",
-            "\tauthor = {${3:author}},",
-            "\tjournal = {${4:journal}},",
-            "\tyear = {${5:year}}",
+            "\tnumber = {${8:number}},",
+            "\tseries = {${9:series}},",
+            "\tpages = {${10:pages}},",
+            "\taddress= = {${11:address}}",
+            "\tmonth = {${12:month}},",
+            "\torganization = {${13:organization}},",
+            "\tpublisher = {${14:publisher}},",
+            "\tnote = {${15:An optional note}},",
             "}"
         ]
     },
@@ -151,42 +149,6 @@
             "\tyear = {${5:year}},",
             "\tnote = {$6},",
             "}"
-
-        ]
-    },
-    "Title of the Paper":{
-        "scope": "bibtex, latex",
-        "prefix": "title",
-        "body":[
-            "title = {${1:title}},"
-        ]
-    },
-    "List of Authors":{
-        "scope": "bibtex, latex",
-        "prefix": "authors",
-        "body":[
-            "author = {${1:author}},"
-        ]
-    },
-    "Reference Journal":{
-        "scope": "bibtex, latex",
-        "prefix": "journal",
-        "body": [
-            "journal = {${1:journal}},"
-        ]
-    },
-    "Pages of References":{
-        "scope": "bibtex, latex",
-        "prefix": "pages",
-        "body": [
-            "pages = {${1}-${2}}"
-        ]
-    },
-    "Year of the Publication":{
-        "scope": "bibtex, latex",
-        "prefix": "year",
-        "body":[
-            "year = {${1:year}}"
         ]
     }
 }

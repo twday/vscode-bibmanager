@@ -1,0 +1,598 @@
+{
+    "article": {
+        "title": {
+            "required": true,
+            "alternatives": []
+        },
+        "author": {
+            "required": true,
+            "alternatives": []
+        },
+        "journal": {
+            "required": true,
+            "alternatives": []
+        },
+        "year": {
+            "required": true,
+            "alternatives": []
+        },
+        "volume": {
+            "required": false,
+            "alternatives": []
+        },
+        "number": {
+            "required": false,
+            "alternatives": []
+        },
+        "pages": {
+            "required": false,
+            "alternatives": []
+        },
+        "month": {
+            "required": false,
+            "alternatives": []
+        },
+        "note":{
+            "required": false,
+            "alternatives": []
+        }
+    }, 
+    "book": {
+        "author": {
+            "required": true,
+            "alternatives": ["editor"]
+        },
+        "editor": {
+            "required": true,
+            "alternatives": ["author"]
+        },
+        "title": {
+            "required": true,
+            "alternatives": []
+        },
+        "publisher": {
+            "required": true,
+            "alternatives": []
+        },
+        "year": {
+            "required": true,
+            "alternatives": []
+        },
+        "volume": {
+            "required": false,
+            "alternatives": ["number"]
+        },
+        "number": {
+            "required": false,
+            "alternatives": ["volume"]
+        },
+        "series": {
+            "required": false,
+            "alternatives": []
+        },
+        "address": {
+            "required": false,
+            "alternatives": []
+        },
+        "edition": {
+            "required": false,
+            "alternatives": []
+        },
+        "month": {
+            "required": false,
+            "alternatives": []
+        },
+        "note": {
+            "required": false,
+            "alternatives": []
+        }
+    }, 
+    "booklet": {
+        "author": {
+            "required": false,
+            "alternatives": []
+        },
+        "title": {
+            "required": true,
+            "alternatives": []
+        },
+        "howpublished": {
+            "required": false,
+            "alternatives": []
+        },
+        "address": {
+            "required": false,
+            "alternatives": []
+        },
+        "month": {
+            "required": false,
+            "alternatives": []
+        },
+        "year": {
+            "required": false,
+            "alternatives": []
+        },
+        "note": {
+            "required": false,
+            "alternatives": []
+        }
+    }, 
+    "conference": {
+        "author": {
+            "required": true,
+            "alternatives": []
+        },
+        "title": {
+            "required": true,
+            "alternatives": []
+        },
+        "booktitle": {
+            "required": true,
+            "alternatives": []
+        },
+        "year": {
+            "required": true,
+            "alternatives": []
+        },
+        "editor": {
+            "required": false,
+            "alternatives": []
+        },
+        "volume": {
+            "required": false,
+            "alternatives": ["number"]
+        },
+        "number": {
+            "required": false,
+            "alternatives": ["volume"]
+        },
+        "series": {
+            "required": false,
+            "alternatives": []
+        },
+        "pages": {
+            "required": false,
+            "alternatives": []
+        },
+        "address": {
+            "required": false,
+            "alternatives": []
+        },
+        "month": {
+            "required": false,
+            "alternatives": []
+        },
+        "organization": {
+            "required": false,
+            "alternatives": []
+        },
+        "publisher": {
+            "required": false,
+            "alternatives": []
+        },
+        "note": {
+            "required": false,
+            "alternatives": []
+        }
+    }, 
+    "inbook": {
+        "author": {
+            "required": true,
+            "alternatives": ["editor"]
+        },
+        "editor": {
+            "required": true,
+            "alternatives": ["author"]
+        },
+        "title": {
+            "required": true,
+            "alternatives": []
+        },
+        "chapter": {
+            "required": true,
+            "alternatives": ["pages"]
+        },
+        "pages": {
+            "required": true,
+            "alternatives": ["chapter"]
+        },
+        "publisher": {
+            "required": true,
+            "alternatives": []
+        },
+        "year": {
+            "required": true,
+            "alternatives": []
+        },
+        "volume": {
+            "required": false,
+            "alternatives": ["number"]
+        },
+        "number": {
+            "required": false,
+            "alternatives": ["volume"]
+        },
+        "series": {
+            "required": false,
+            "alternatives": []
+        },
+        "type": {
+            "required": false,
+            "alternatives": []
+        },
+        "address": {
+            "required": false,
+            "alternatives": []
+        },
+        "edition": {
+            "required": false,
+            "alternatives": []
+        },
+        "month": {
+            "required": false,
+            "alternatives": []
+        },
+        "note": {
+            "required": false,
+            "alternatives": []
+        }
+    }, 
+    "incollection": {
+        "author": {
+            "required": true,
+            "alternatives": []
+        },
+        "title": {
+            "required": true,
+            "alternatives": []
+        },
+        "booktitle": {
+            "required": true,
+            "alternatives": []
+        },
+        "publisher": {
+            "required": true,
+            "alternatives": []
+        },
+        "year": {
+            "required": true,
+            "alternatives": []
+        },
+        "editor": {
+            "required": false,
+            "alternatives": []
+        },
+        "volume": {
+            "required": false,
+            "alternatives": ["number"]
+        },
+        "number": {
+            "required": false,
+            "alternatives": ["volume"]
+        },
+        "series": {
+            "required": false,
+            "alternatives": []
+        },
+        "type": {
+            "required": false,
+            "alternatives": []
+        },
+        "chapter": {
+            "required": false,
+            "alternatives": []
+        },
+        "pages": {
+            "required": false,
+            "alternatives": []
+        },
+        "address": {
+            "required": false,
+            "alternatives": []
+        },
+        "edition": {
+            "required": false,
+            "alternatives": []
+        },
+        "month": {
+            "required": false,
+            "alternatives": []
+        },
+        "note": {
+            "required": false,
+            "alternatives": []
+        }
+    }, 
+    "inproceedings": {
+        "author": {
+            "required": true,
+            "alternatives": []
+        },
+        "title": {
+            "required": true,
+            "alternatives": []
+        },
+        "booktitle": {
+            "required": true,
+            "alternatives": []
+        },
+        "year": {
+            "required": true,
+            "alternatives": []
+        },
+        "editor": {
+            "required": false,
+            "alternatives": []
+        },
+        "volume": {
+            "required": false,
+            "alternatives": ["number"]
+        },
+        "number": {
+            "required": false,
+            "alternatives": ["volume"]
+        },
+        "series": {
+            "required": false,
+            "alternatives": []
+        },
+        "pages": {
+            "required": false,
+            "alternatives": []
+        },
+        "address": {
+            "required": false,
+            "alternatives": []
+        },
+        "month": {
+            "required": false,
+            "alternatives": []
+        },
+        "organization": {
+            "required": false,
+            "alternatives": []
+        },
+        "publisher": {
+            "required": false,
+            "alternatives": []
+        },
+        "note": {
+            "required": false,
+            "alternatives": []
+        }
+    },  
+    "manual": {
+        "author": {
+            "required": false,
+            "alternatives": []
+        },
+        "title": {
+            "required": true,
+            "alternatives": []
+        },
+        "organization": {
+            "required": false,
+            "alternatives": []
+        },
+        "address": {
+            "required": false,
+            "alternatives": []
+        },
+        "edition": {
+            "required": false,
+            "alternatives": []
+        },
+        "month": {
+            "required": false,
+            "alternatives": []
+        },
+        "year": {
+            "required": false,
+            "alternatives": []
+        },
+        "note": {
+            "required": false,
+            "alternatives": []
+        }
+    },
+    "masterthesis": {
+        "author": {
+            "required": true,
+            "alternatives": []
+        },
+        "title": {
+            "required": true,
+            "alternatives": []
+        },
+        "school": {
+            "required": true,
+            "alternatives": []
+        },
+        "year": {
+            "required": true,
+            "alternatives": []
+        },
+        "type": {
+            "required": false,
+            "alternatives": []
+        },
+        "address": {
+            "required": false,
+            "alternatives": []
+        },
+        "month": {
+            "required": false,
+            "alternatives": []
+        },
+        "note": {
+            "required": false,
+            "alternatives": []
+        }
+    }, 
+    "misc": {
+        "author": {
+            "required": false,
+            "alternatives": []
+        },
+        "title": {
+            "required": false,
+            "alternatives": []
+        },
+        "howpublished": {
+            "required": false,
+            "alternatives": []
+        },
+        "month": {
+            "required": false,
+            "alternatives": []
+        },
+        "year": {
+            "required": false,
+            "alternatives": []
+        },
+        "note": {
+            "required": false,
+            "alternatives": []
+        }
+    }, 
+    "phdthesis": {
+        "author": {
+            "required": true,
+            "alternatives": []
+        },
+        "title": {
+            "required": true,
+            "alternatives": []
+        },
+        "school": {
+            "required": true,
+            "alternatives": []
+        },
+        "year": {
+            "required": true,
+            "alternatives": []
+        },
+        "type": {
+            "required": false,
+            "alternatives": []
+        },
+        "address": {
+            "required": false,
+            "alternatives": []
+        },
+        "month": {
+            "required": false,
+            "alternatives": []
+        },
+        "note": {
+            "required": false,
+            "alternatives": []
+        }
+    }, 
+    "proceedings": {
+        "title": {
+            "required": true,
+            "alternatives": []
+        },
+        "editor": {
+            "required": false,
+            "alternatives": []
+        },
+        "volume": {
+            "required": false,
+            "alternatives": ["number"]
+        },
+        "number": {
+            "required": false,
+            "alternatives": ["volume"]
+        },
+        "series": {
+            "required": false,
+            "alternatives": []
+        },
+        "address": {
+            "required": false,
+            "alternatives": []
+        },
+        "month": {
+            "required": false,
+            "alternatives": []
+        },
+        "organization": {
+            "required": false,
+            "alternatives": []
+        },
+        "publisher": {
+            "required": false,
+            "alternatives": []
+        },
+        "note": {
+            "required": false,
+            "alternatives": []
+        },
+        "year": {
+            "required": true,
+            "alternatives": []
+        }
+    }, 
+    "techreport": {
+        "author": {
+            "required": true,
+            "alternatives": []
+        },
+        "title": {
+            "required": true,
+            "alternatives": []
+        },
+        "institution": {
+            "required": true,
+            "alternatives": []
+        },
+        "year": {
+            "required": true,
+            "alternatives": []
+        },
+        "type": {
+            "required": false,
+            "alternatives": []
+        },
+        "number": {
+            "required": false,
+            "alternatives": []
+        },
+        "address": {
+            "required": false,
+            "alternatives": []
+        },
+        "month": {
+            "required": false,
+            "alternatives": []
+        },
+        "note": {
+            "required": false,
+            "alternatives": []
+        }
+    }, 
+    "unpublished": {
+        "author": {
+            "required": true,
+            "alternatives": []
+        },
+        "title": {
+            "required": true,
+            "alternatives": []
+        },
+        "note": {
+            "required": true,
+            "alternatives": []
+        },
+        "month": {
+            "required": false,
+            "alternatives": []
+        },
+        "year": {
+            "required": false,
+            "alternatives": []
+        }
+    } 
+}
