@@ -36,6 +36,19 @@
         "Snippets"
     ],
     "contributes": {
+        "languages": [
+            {
+                "id": "bibtex",
+                "aliases": [
+                    "BibTeX",
+                    "bibtex"
+                ],
+                "extensions": [
+                    ".bib"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
         "configuration": {
             "type": "object",
             "title": "BibTeX Manager",
