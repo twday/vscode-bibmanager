@@ -313,86 +313,6 @@ connection.onCompletion(
         let textDocument = documents.get(_textDocumentPosition.textDocument.uri);
 
         return getCompletionItems(textDocument, _textDocumentPosition.position);
-
-        return [
-            {
-                label: 'author',
-                kind: CompletionItemKind.Text,
-                insertText: 'author = {${1:author}}',
-                insertTextFormat: InsertTextFormat.Snippet,
-                data: 'author'
-            },
-            {
-                label: 'journal',
-                kind: CompletionItemKind.Text,
-                insertText: 'journal = {${1:journal}}',
-                insertTextFormat: InsertTextFormat.Snippet,
-                data: 2
-            },
-            {
-                label: 'year',
-                kind: CompletionItemKind.Text,
-                insertText: 'year = ${1:year}',
-                insertTextFormat: InsertTextFormat.Snippet,
-                data: 3
-            },
-            {
-                label: 'title',
-                kind: CompletionItemKind.Text,
-                insertText: 'title = {${1:title}}',
-                insertTextFormat: InsertTextFormat.Snippet,
-                data: 4
-            },
-            {
-                label: 'booktitle',
-                kind: CompletionItemKind.Text,
-                insertText: 'booktitle = {${1:booktitle}}',
-                insertTextFormat: InsertTextFormat.Snippet,
-                data: 5
-            },
-            {
-                label: 'pages',
-                kind: CompletionItemKind.Text,
-                insertText: 'pages = ${1:start}-${2:end}',
-                insertTextFormat: InsertTextFormat.Snippet,
-                data: 6
-            },
-            {
-                label: 'number',
-                kind: CompletionItemKind.Text,
-                insertText: 'number = ${1:number}',
-                insertTextFormat: InsertTextFormat.Snippet,
-                data: 7
-            },
-            {
-                label: 'volume',
-                kind: CompletionItemKind.Text,
-                insertText: 'volume = ${1:volume}',
-                insertTextFormat: InsertTextFormat.Snippet,
-                data: 8
-            },
-            {
-                label: 'url',
-                kind: CompletionItemKind.Text,
-                insertText: 'url = {$1:url}',
-                insertTextFormat: InsertTextFormat.Snippet,
-                data: 9
-            },
-            {
-                label: 'publisher',
-                kind: CompletionItemKind.Text,
-                insertText: 'publisher = {${1:publisher}}',
-                insertTextFormat: InsertTextFormat.Snippet,
-                data: 10
-            },
-            {
-                label: 'organization',
-                kind: CompletionItemKind.Text,
-                insertText: 'organization = {${1:organization}}',
-                insertTextFormat: InsertTextFormat.Snippet,
-                data: 11
-            }
-        ];
     }
 );
 
@@ -414,8 +334,8 @@ function getCompletionItems(textDocument : TextDocument | undefined, position : 
                 position.line < textDocument.positionAt(query.index + query[0].length).line
             );
             if (inRelevantBlock){
+                let entryName = query[1];
                 let entryDef = citeTypes[query[1]];
-                connection.console.log(query[1]);
                 let fields = Object.getOwnPropertyNames(entryDef);
                 fields.forEach((value, index) => {
                     let item : CompletionItem = {
@@ -423,7 +343,10 @@ function getCompletionItems(textDocument : TextDocument | undefined, position : 
                         kind: CompletionItemKind.Snippet,
                         insertText: value + ' = {${1:' + value + '}}',
                         insertTextFormat: InsertTextFormat.Snippet,
-                        data: value
+                        data: {
+                            'entry': entryName,
+                            'field': value
+                        }
                     };
                     items.push(item);
                 });
@@ -437,58 +360,30 @@ function getCompletionItems(textDocument : TextDocument | undefined, position : 
 // Handles additional information for item selected in completion list
 connection.onCompletionResolve(
     (item: CompletionItem): CompletionItem => {
-        switch (item.data){
-            case 1:
-                item.detail = 'Author';
-                item.documentation = {
-                    kind: MarkupKind.Markdown,
-                    value: [
-                        '# Author of the publication'
-                    ].join('\n')
-                };
-                break;
-            case 2:
-                item.detail = 'Journal';
-                item.documentation = 'Journal that the citation is from';
-                break;
-            case 3:
-                item.detail = 'Year';
-                item.documentation = 'Year of the citation';
-                break;
-            case 4:
-                item.detail = 'Title';
-                item.documentation = 'Title of the citation';
-                break;
-            case 5:
-                item.detail = 'Book Title';
-                item.documentation = 'Title of the book the citation is from';
-                break;
-            case 6:
-                item.detail = 'Pages';
-                item.documentation = 'Page number(s) of the citation';
-                break;
-            case 7:
-                item.detail = 'Number';
-                item.documentation = '';
-                break;
-            case 8:
-                item.detail = 'Volume';
-                item.documentation = 'Volume of the journal/book';
-                break;
-            case 9:
-                item.detail = 'URL';
-                item.documentation = 'URL of the citation';
-                break;
-            case 10:
-                item.detail = 'Publisher';
-                item.documentation = 'Citation Publisher';
-                break;
-            case 11:
-                item.detail = 'Organization';
-                item.documentation = 'Organization that runs the Conference/Journal';
-                break;
+        
+        let entry = citeTypes[item.data.entry];
+        let field = entry[item.data.field];
+
+        item.detail = item.data.value;
+
+        let alternatives : string[] = [];
+
+        if (field.alternatives.length > 0){
+            field.alternatives.forEach((value : string) => {
+                alternatives.push('+ ' + value);
+            });
+        } else {
+            alternatives.push('N/A');
         }
 
+        item.documentation = {
+            kind: MarkupKind.Markdown,
+            value: [
+                'Required Field: ' + ((field.required) ? 'Yes' : 'No'),
+                '\nAlternatives: ',
+                ...alternatives,
+            ].join('\n')
+        };
         return item;
     }
 );
