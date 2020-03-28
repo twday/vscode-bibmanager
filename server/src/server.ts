@@ -298,7 +298,8 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 }
 
 connection.onCodeAction((params) => {
-    return codeActions;
+    //return codeActions;
+	return [];
 });
 
 // Monitored files changed in VSCode
