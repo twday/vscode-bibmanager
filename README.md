@@ -47,6 +47,9 @@ This extension does not currently include any settings.
 
 ## Release Notes
 
+### 2.0.0
+Added Intellisense and Linting
+
 ### 1.0.3
 Disabled Sorting temporarily
 
