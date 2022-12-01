@@ -201,7 +201,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
             diagnostics.push(keyDiagnostic);
         }
         
-        let fieldPattern = /(?:(\w*)\s?=\s?(?:"|{|)(\w*)(?:"|}|))+/g;
+        let fieldPattern = /(?:(\w*)\s+?=\s?(?:"|{|)(\w*)(?:"|}|))+/g;
         let fieldQuery: RegExpExecArray | null;
         while ((fieldQuery = fieldPattern.exec(citeQuery[0])) && problems < settings.maxNumberOfProblems){
             let fieldInEntry = citation.hasOwnProperty(fieldQuery[1]);
