@@ -1,102 +1,130 @@
 {
-    "name": "bibmanager",
-    "displayName": "BibManager",
-    "description": "VS Code extension for managing BibTex bibliographies",
-    "version": "2.0.0",
-    "author": {
-        "name": "Thomas Day",
-        "email": "tday42@gmail.com"
-    },
-    "publisher": "twday",
-    "icon": "images/bibmanager-icon.png",
-    "license": "MIT",
-    "homepage": "https://github.com/twday/vscode-bibmanager/blob/master/README.md",
-    "bugs": {
-        "url": "https://github.com/twday/vscode-bibmanager/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/twday/vscode-bibmanager.git"
-    },
-    "engines": {
-        "vscode": "^1.33.0"
-    },
-    "categories": [
-        "Formatters",
-        "Snippets",
-        "Other"
-    ],
-    "activationEvents": [
-        "onLanguage:bibtex"
-    ],
-    "main": "./client/out/extension",
-    "keywords": [
-        "BibTeX",
-        "Sorting",
-        "Snippets"
-    ],
-    "contributes": {
-        "languages": [
-            {
-                "id": "bibtex",
-                "aliases": [
-                    "BibTeX",
-                    "bibtex"
-                ],
-                "extensions": [
-                    ".bib"
-                ],
-                "configuration": "./language-configuration.json"
-            }
-        ],
-        "configuration": {
-            "type": "object",
-            "title": "BibTeX Manager",
-            "properties": {
-                "bibtexManager.maxNumberOfProblems": {
-                    "scope": "resource",
-                    "type": "number",
-                    "default": 100,
-                    "description": "Controls the maximum number of problems produced by the server."
-                },
-                "bibtexManager.trace.server": {
-                    "scope": "window",
-                    "type": "string",
-                    "enum": [
-                        "off",
-                        "messages",
-                        "verbose"
-                    ],
-                    "default": "off",
-                    "description": "Traces the communication between VS Code and the language server."
-                }
-            }
-        },
-        "snippets": [
-            {
-                "language": "bibtex",
-                "path": "./snippets/bibtex.json"
-            }
-        ],
-        "grammars": [
-            {
-                "language": "bibtex",
-                "scopeName": "text.bibtex",
-                "path": "./syntaxes/bibtex.tmLanguage.json"
-            }
-        ]
-    },
-    "scripts": {
-        "vscode:prepublish": "cd ./client && npm run update-vscode && cd .. && npm run compile",
-        "compile": "tsc -b",
-        "watch": "tsc -b -w",
-        "postinstall": "cd ./client && npm install && cd ../server && npm install && cd ..",
-        "test": "sh ./scripts/e2e.sh"
-    },
-    "devDependencies": {
-        "typescript": "^3.6.4",
-        "tslint": "^5.16.0",
-        "@types/node": "^12.11.7",
-        "@types/mocha": "^5.2.7"
-    }
+	"name": "bibmanager",
+	"displayName": "BibManager",
+	"description": "VS Code extension for managing BibTex bibliographies",
+	"version": "2.0.0",
+	"author": {
+		"name": "Thomas Day",
+		"email": "tday42@gmail.com"
+	},
+	"publisher": "twday",
+	"icon": "images/bibmanager-icon.png",
+	"license": "MIT",
+	"homepage": "https://github.com/twday/vscode-bibmanager/blob/master/README.md",
+	"bugs": {
+		"url": "https://github.com/twday/vscode-bibmanager/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/twday/vscode-bibmanager.git"
+	},
+	"engines": {
+		"vscode": "^1.33.0"
+	},
+	"categories": [
+		"Formatters",
+		"Snippets",
+		"Other"
+	],
+	"activationEvents": [
+		"onLanguage:bibtex",
+		"onView:bibTexEntries"
+	],
+	"main": "./client/out/extension",
+	"keywords": [
+		"BibTeX",
+		"Sorting",
+		"Snippets"
+	],
+	"contributes": {
+		"commands": [
+			{
+				"command": "bibTexEntries.refreshEntry",
+				"title": "Refresh",
+				"icon": {
+					"light": "resources/light/refresh.svg",
+					"dark": "resources/light/refresh.svg"
+				}
+			}
+		],
+		"menus": {
+			"view/title": [
+				{
+					"command": "bibTexEntries.refreshEntry",
+					"when": "view == bibTexEntries",
+					"group": "navigation"
+				}
+			]
+		},
+		"languages": [
+			{
+				"id": "bibtex",
+				"aliases": [
+					"BibTeX",
+					"bibtex"
+				],
+				"extensions": [
+					".bib"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"views": {
+			"explorer": [
+				{
+					"id": "bibTexEntries",
+					"name": "BibTex Entries"
+				}
+			]
+		},
+		"configuration": {
+			"type": "object",
+			"title": "BibTeX Manager",
+			"properties": {
+				"bibtexManager.maxNumberOfProblems": {
+					"scope": "resource",
+					"type": "number",
+					"default": 100,
+					"description": "Controls the maximum number of problems produced by the server."
+				},
+				"bibtexManager.trace.server": {
+					"scope": "window",
+					"type": "string",
+					"enum": [
+						"off",
+						"messages",
+						"verbose"
+					],
+					"default": "off",
+					"description": "Traces the communication between VS Code and the language server."
+				}
+			}
+		},
+		"snippets": [
+			{
+				"language": "bibtex",
+				"path": "./snippets/bibtex.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "bibtex",
+				"scopeName": "text.bibtex",
+				"path": "./syntaxes/bibtex.tmLanguage.json"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "cd ./client && npm run update-vscode && cd .. && npm run compile",
+		"compile": "tsc -b",
+		"watch": "tsc -b -w",
+		"postinstall": "cd ./client && npm install && cd ../server && npm install && cd ..",
+		"test": "sh ./scripts/e2e.sh"
+	},
+	"devDependencies": {
+		"typescript": "^3.6.4",
+		"tslint": "^5.16.0",
+		"@types/node": "^12.11.7",
+		"@types/mocha": "^5.2.7"
+	}
 }
