@@ -76,7 +76,7 @@ export function activate(context: ExtensionContext) {
 			return false;
 		},
 		middleware: {
-			provideCodeActions: (document, range, context, token, next): ProviderResult<(Command | CodeAction)[]> => {
+			/*provideCodeActions: (document, range, context, token, next): ProviderResult<(Command | CodeAction)[]> => {
 				if (!context.diagnostics || context.diagnostics.length === 0) {
 					return [];
 				}
@@ -91,7 +91,7 @@ export function activate(context: ExtensionContext) {
 				}
 				let newContext: CodeActionContext = Object.assign({}, context, { diagnostics: bibTeXDiagnostics } as CodeActionContext);
 				return next(document, range, newContext, token);
-			}
+			}*/
 		}
 	};
 

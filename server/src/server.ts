@@ -1,30 +1,31 @@
 import {
 	createConnection,
-	TextDocument,
-	TextDocuments,
-	Diagnostic,
-	DiagnosticSeverity,
-	ProposedFeatures,
-	InitializeParams,
-	DidChangeConfigurationNotification,
+	CodeAction,
+	CodeActionKind,
 	CompletionItem,
 	CompletionItemKind,
-	TextDocumentPositionParams,
+	Diagnostic,
+	DiagnosticSeverity,
+	DidChangeConfigurationNotification,
+	ProposedFeatures,
+	InitializeParams,
 	MarkupKind,
 	InsertTextFormat,
-	CodeAction,
 	TextEdit,
-	CodeActionKind,
+	TextDocuments,
+	TextDocumentSyncKind,
+	TextDocumentPositionParams,
 	FormattingOptions,
-	WorkspaceEdit,
 	Position,
+	WorkspaceEdit,
 } from 'vscode-languageserver';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import citeDefinitions from './definitions.json';
 import { ClientRequest } from 'http';
 
 let connection = createConnection(ProposedFeatures.all);
-let documents: TextDocuments = new TextDocuments();
+let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
 let hasDocumentOnTypeFormattingCapability: boolean = false;
@@ -58,7 +59,7 @@ connection.onInitialize((params: InitializeParams) => {
 
 	return {
 		capabilities: {
-			textDocumentSync: documents.syncKind,
+			textDocumentSync: TextDocumentSyncKind.Full,
 			completionProvider: {
 				resolveProvider: true,
 			},
