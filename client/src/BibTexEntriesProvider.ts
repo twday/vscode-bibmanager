@@ -50,7 +50,7 @@ export class BibTexEntriesProvider implements TreeDataProvider<BibEntryTreeItem>
 
 	refresh(): void {
 		this.bibManager.UpdateBibList().then(() => {
-			this._onDidChangeTreeData.fire();
+			this._onDidChangeTreeData.fire;
 		});
 	}
 
