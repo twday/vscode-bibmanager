@@ -1,7 +1,6 @@
-<p align="center">
-  <br />
-  <a title="Learn more about BibManager" href="http://github.com/twday/vscode-bibmanager"><img src="https://raw.githubusercontent.com/twday/vscode-bibmanager/master/images/bibmanager-icon.png" alt="BibManager-Logo" /></a>
-</p>
+#
+
+[![BibTex Manager](https://raw.githubusercontent.com/twday/vscode-bibmanager/master/images/bibmanager-icon.png)](https://github.com/twday/vscode-bibmanager)
 
 [![Version](https://img.shields.io/visual-studio-marketplace/v/twday.bibmanager?label=Version\&cacheSeconds=86400)](https://marketplace.visualstudio.com/items?itemName=twday.bibmanager)
 [![Installs](https://img.shields.io/visual-studio-marketplace/i/twday.bibmanager?label=Installs\&cacheSeconds=86400)](https://marketplace.visualstudio.com/items?itemName=twday.bibmanager)
@@ -12,6 +11,7 @@
 ## Features
 
 ### Code Snippets
+
 ![Code Snippets](images/features/codesnippets.gif)
 
 <!--
@@ -32,6 +32,7 @@ Sorting by title in descending order:
 
 ![Sorting by Title (Descending order)](images/features/sortTitleDsc.gif)
 -->
+
 ## Requirements
 
 This extension does not require any additional extensions to be installed.
@@ -47,16 +48,24 @@ This extension does not currently include any settings.
 
 ## Release Notes
 
+### 2.1.0
+
+Added Tree View to Explorer panel
+
 ### 2.0.0
+
 Added Intellisense and Linting
 
 ### 1.0.3
+
 Disabled Sorting temporarily
 
 ### 1.0.2
+
 Updated code snippets
 
 ### 1.0.1
+
 Updated extension name
 Removed unnecessary information messages
 
@@ -64,6 +73,7 @@ Removed unnecessary information messages
 
 Initial release of BibManager
 Features
+
 + Code Snippets
 + Sorting references by Key
   + Ascending order
