@@ -1,17 +1,20 @@
-<p align="center">
-  <br />
-  <a title="Learn more about BibManager" href="http://github.com/twday/vscode-bibmanager"><img src="https://raw.githubusercontent.com/twday/vscode-bibmanager/master/images/bibmanager-icon.png" alt="BibManager-Logo" /></a>
-</p>
+#
 
-[![](https://vsmarketplacebadge.apphb.com/version-short/twday.bibmanager.svg)](https://marketplace.visualstudio.com/items?itemName=twday.bibmanager)
-[![](https://vsmarketplacebadge.apphb.com/installs-short/twday.bibmanager.svg)](https://marketplace.visualstudio.com/items?itemName=twday.bibmanager)
-[![](https://vsmarketplacebadge.apphb.com/rating-short/twday.bibmanager.svg)](https://marketplace.visualstudio.com/items?itemName=twday.bibmanager)
+[![BibTex Manager](https://raw.githubusercontent.com/twday/vscode-bibmanager/master/images/bibmanager-icon.png)](https://github.com/twday/vscode-bibmanager)
+
+[!["Version"](https://vsmarketplacebadge.apphb.com/version-short/twday.bibmanager.svg)](https://marketplace.visualstudio.com/items?itemName=twday.bibmanager)
+
+[!["Installs"](https://vsmarketplacebadge.apphb.com/installs-short/twday.bibmanager.svg)](https://marketplace.visualstudio.com/items?itemName=twday.bibmanager)
+
+[!["Rating"](https://vsmarketplacebadge.apphb.com/rating-short/twday.bibmanager.svg)](https://marketplace.visualstudio.com/items?itemName=twday.bibmanager)
+
 -------------------------------------------------------------
 [BibManager](https://github.com/twday/vscode-bibmanager) is an Open-Source extension for Visual Studio Code. It provides code snippets to make creating BibTeX entries faster, and allows you to sort bibliographies.
 
 ## Features
 
 ### Code Snippets
+
 ![Code Snippets](images/features/codesnippets.gif)
 
 <!--
@@ -32,6 +35,7 @@ Sorting by title in descending order:
 
 ![Sorting by Title (Descending order)](images/features/sortTitleDsc.gif)
 -->
+
 ## Requirements
 
 This extension does not require any additional extensions to be installed.
@@ -47,16 +51,24 @@ This extension does not currently include any settings.
 
 ## Release Notes
 
+### 2.1.0
+
+Added Tree View to Explorer panel
+
 ### 2.0.0
+
 Added Intellisense and Linting
 
 ### 1.0.3
+
 Disabled Sorting temporarily
 
 ### 1.0.2
+
 Updated code snippets
 
 ### 1.0.1
+
 Updated extension name
 Removed unnecessary information messages
 
@@ -64,6 +76,7 @@ Removed unnecessary information messages
 
 Initial release of BibManager
 Features
+
 + Code Snippets
 + Sorting references by Key
   + Ascending order
