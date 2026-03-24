@@ -4,6 +4,9 @@
 scripts/**
 out/test/**
 out/**/*.map
+client/out/test/**
+client/out/**/*.map
+server/out/**/*.map
 src/**
 client/src/**
 server/src/**
@@ -20,6 +23,8 @@ client/tsconfig.json
 client/package-lock.json
 server/tsconfig.json
 server/package-lock.json
+client/node_modules/**
+server/node_modules/**
 tsconfig.json
 vsc-extension-quickstart.md
 tslint.json
