@@ -3,9 +3,9 @@
   <a title="Learn more about BibManager" href="http://github.com/twday/vscode-bibmanager"><img src="https://raw.githubusercontent.com/twday/vscode-bibmanager/master/images/bibmanager-icon.png" alt="BibManager-Logo" /></a>
 </p>
 
-[![](https://vsmarketplacebadge.apphb.com/version-short/twday.bibmanager.svg)](https://marketplace.visualstudio.com/items?itemName=twday.bibmanager)
-[![](https://vsmarketplacebadge.apphb.com/installs-short/twday.bibmanager.svg)](https://marketplace.visualstudio.com/items?itemName=twday.bibmanager)
-[![](https://vsmarketplacebadge.apphb.com/rating-short/twday.bibmanager.svg)](https://marketplace.visualstudio.com/items?itemName=twday.bibmanager)
+[![Version](https://img.shields.io/visual-studio-marketplace/v/twday.bibmanager?label=Version\&cacheSeconds=86400)](https://marketplace.visualstudio.com/items?itemName=twday.bibmanager)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/twday.bibmanager?label=Installs\&cacheSeconds=86400)](https://marketplace.visualstudio.com/items?itemName=twday.bibmanager)
+[![Rating](https://img.shields.io/visual-studio-marketplace/r/twday.bibmanager?label=Rating\&cacheSeconds=86400)](https://marketplace.visualstudio.com/items?itemName=twday.bibmanager)
 -------------------------------------------------------------
 [BibManager](https://github.com/twday/vscode-bibmanager) is an Open-Source extension for Visual Studio Code. It provides code snippets to make creating BibTeX entries faster, and allows you to sort bibliographies.
 
