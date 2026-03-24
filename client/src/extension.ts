@@ -104,7 +104,6 @@ export function activate(context: ExtensionContext) {
 
 	client.registerProposedFeatures();
 	void client.start();
-
 	let sortKeyAscending = commands.registerTextEditorCommand('extension.sortKeyAsc', () => {
 		bibManager.SortEntries(SortType.KeyAsc);
 		window.showInformationMessage('Sorting By Key in Ascending Order');

@@ -65,7 +65,7 @@ connection.onInitialize((params: InitializeParams) => {
 			},
 			codeActionProvider: true,
 			documentOnTypeFormattingProvider: {
-				firstTriggerCharacter: ",",
+				firstTriggerCharacter: ',',
 			}
 		}
 	};
