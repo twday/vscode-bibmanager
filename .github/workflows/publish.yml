@@ -52,12 +52,20 @@ jobs:
       - name: Compile
         run: npm run compile
 
+      - name: Prune dev dependencies
+        run: |
+          npm prune --omit=dev --prefix client
+          npm prune --omit=dev --prefix server
+
+      - name: Package extension
+        run: npx @vscode/vsce package -o bibmanager.vsix
+
       - name: Publish to Visual Studio Marketplace
-        run: npx @vscode/vsce publish -p "${VSCE_PAT}"
+        run: npx @vscode/vsce publish --packagePath bibmanager.vsix -p "${VSCE_PAT}"
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
       - name: Publish to Open VSX
-        run: npx ovsx publish -p "${OVSX_PAT}"
+        run: npx ovsx publish -p "${OVSX_PAT}" bibmanager.vsix
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
