@@ -18,7 +18,7 @@ import {
 	ServerOptions,
 	TransportKind,
 	Command,
-} from 'vscode-languageclient';
+} from 'vscode-languageclient/node';
 
 var types = ['electronic', 'article', 'inproceedings', 'misc'];
 enum SortType {
@@ -98,9 +98,7 @@ export function activate(context: ExtensionContext) {
 	);
 
 	client.registerProposedFeatures();
-	client.onReady().then(() => {
-
-	});
+	void client.start();
 
 	let bibManager = new BibManager();
 
@@ -123,7 +121,7 @@ export function activate(context: ExtensionContext) {
 	});
 
 	context.subscriptions.push(
-		client.start(),
+		client,
 		sortKeyAscending,
 		sortKeyDescending,
 		sortTitleAscending,
