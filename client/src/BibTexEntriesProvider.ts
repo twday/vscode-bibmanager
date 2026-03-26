@@ -10,13 +10,24 @@ import BibEntry from './BibEntry';
 import { BibEntryTreeItem, BibEntryType } from './BibEntryTreeItem';
 import { BibManager } from './BibManager';
 
+
 export class BibTexEntriesProvider implements TreeDataProvider<BibEntryTreeItem>{
 	private _onDidChangeTreeData: EventEmitter<BibEntryTreeItem> = new EventEmitter<BibEntryTreeItem>();
 	readonly onDidChangeTreeData?: Event<BibEntryTreeItem> = this._onDidChangeTreeData.event;
 
 	private bibManager: BibManager = BibManager.Instance;
+	private searchTerm: string | undefined = undefined;
 
 	constructor(private workspaceRoot: string) { }
+
+	setSearchTerm(term: string | undefined) {
+		this.searchTerm = term ? term.trim().toLowerCase() : undefined;
+		this._onDidChangeTreeData.fire(undefined);
+	}
+	clearSearch() {
+		this.searchTerm = undefined;
+		this._onDidChangeTreeData.fire(undefined);
+	}
 
 	getTreeItem(element: BibEntryTreeItem): TreeItem {
 		return element;
@@ -30,19 +41,36 @@ export class BibTexEntriesProvider implements TreeDataProvider<BibEntryTreeItem>
 
 		if (element) {
 			if (element.type === BibEntryType.file) {
-				return Promise.resolve(
-					this.getEntriesInFile(element.entries)
-				);
+				let entries = element.entries;
+				if (this.searchTerm) {
+					entries = entries.filter(e =>
+						(e.key && e.key.toLowerCase().includes(this.searchTerm!)) ||
+						(e.title && e.title.toLowerCase().includes(this.searchTerm!)) ||
+						(e.author && e.author.toLowerCase().includes(this.searchTerm!))
+					);
+				}
+				return Promise.resolve(this.getEntriesInFile(entries));
 			}
 		} else {
 			if (this.bibManager.Entries.size > 0) {
-				return Promise.resolve(this.getEntryFilesInManager(this.bibManager.Entries));
+				let files = this.getEntryFilesInManager(this.bibManager.Entries);
+				if (this.searchTerm) {
+					// Only show files that have at least one matching entry
+					files = files.filter(fileItem => {
+						const entries = fileItem.entries;
+						return entries.some(e =>
+							(e.key && e.key.toLowerCase().includes(this.searchTerm!)) ||
+							(e.title && e.title.toLowerCase().includes(this.searchTerm!)) ||
+							(e.author && e.author.toLowerCase().includes(this.searchTerm!))
+						);
+					});
+				}
+				return Promise.resolve(files);
 			} else {
 				window.showInformationMessage('Workspace has no BibTex Files');
 				return Promise.resolve([]);
 			}
 		}
-
 		return Promise.resolve([]);
 	}
 

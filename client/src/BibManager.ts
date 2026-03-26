@@ -73,7 +73,7 @@ export class BibManager {
 						var kv = line.split("=").filter(String);
 						if (this.types.indexOf(kv[0]) > -1) {
 							bibEntry.type = kv[0];
-							bibEntry.key = kv[1];
+							bibEntry.key = kv[1] ? kv[1].trim() : kv[1];
 						} else {
 							if (kv[0] !== undefined) {
 								var key = kv[0].replace(whitespace, "");

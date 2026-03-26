@@ -40,6 +40,20 @@ export function activate(context: ExtensionContext) {
 		window.registerTreeDataProvider('bibTexEntries', bibTexEntriesProvider);
 		commands.registerCommand('bibTexEntries.refreshEntry', () => bibTexEntriesProvider.refresh());
 
+		// Search command
+		commands.registerCommand('bibTexEntries.search', async () => {
+			const term = await window.showInputBox({ prompt: 'Search BibTeX entries (by key, title, or author)' });
+			if (term !== undefined) {
+				bibTexEntriesProvider.setSearchTerm(term);
+				await commands.executeCommand('setContext', 'bibManager:searchActive', !!term && term.trim().length > 0);
+			}
+		});
+		// Clear search command
+		commands.registerCommand('bibTexEntries.clearSearch', async () => {
+			bibTexEntriesProvider.clearSearch();
+			await commands.executeCommand('setContext', 'bibManager:searchActive', false);
+		});
+
 		// Command to navigate to a bibtex entry
 		commands.registerCommand('bibTexEntries.goToEntry', async (filePath: string, lineNumber: number) => {
 			try {
@@ -66,6 +80,21 @@ export function activate(context: ExtensionContext) {
 				}
 			} catch (error) {
 				window.showErrorMessage(`Failed to copy key: ${error}`);
+			}
+		});
+
+		// Command to copy the bibtex key as a cite tag to clipboard
+		commands.registerCommand('bibTexEntries.copyCite', async (treeItem: any) => {
+			try {
+				if (treeItem.key) {
+					const citeText = `\\cite{${treeItem.key}}`;
+					await env.clipboard.writeText(citeText);
+					window.showInformationMessage(`Copied "${citeText}" to clipboard`);
+				} else {
+					window.showErrorMessage('No key found to copy');
+				}
+			} catch (error) {
+				window.showErrorMessage(`Failed to copy cite: ${error}`);
 			}
 		});
 	});
