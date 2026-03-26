@@ -22,7 +22,6 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import citeDefinitions from './definitions.json';
-import { ClientRequest } from 'http';
 
 let connection = createConnection(ProposedFeatures.all);
 let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
@@ -33,7 +32,7 @@ let hasDiagnosticsRelatedInformationCapability: boolean = false;
 
 let citeTypes: any = citeDefinitions;
 
-let codeActions: CodeAction[] = [];
+let documentCodeActions: Map<string, CodeAction[]> = new Map();
 
 connection.onInitialize((params: InitializeParams) => {
 	let capabilities = params.capabilities;
@@ -137,6 +136,7 @@ function getDocumentSettings(resource: string): Thenable<BibManagerSettings> {
 
 documents.onDidClose((e: { document: { uri: string; }; }) => {
 	documentSettings.delete(e.document.uri);
+	documentCodeActions.delete(e.document.uri);
 });
 
 documents.onDidChangeContent((change: { document: TextDocument; }) => {
@@ -152,6 +152,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 
 	let problems = 0;
 	let diagnostics: Diagnostic[] = [];
+	let docCodeActions: CodeAction[] = [];
 	while ((citeQuery = citePattern.exec(text)) && problems < settings.maxNumberOfProblems) {
 		let citeType = citeTypes.hasOwnProperty(citeQuery[1]);
 		let citation = citeTypes[citeQuery[1]];
@@ -206,12 +207,29 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 		let fieldQuery: RegExpExecArray | null;
 		while (citation && (fieldQuery = fieldPattern.exec(citeQuery[0])) && problems < settings.maxNumberOfProblems) {
 			let fieldInEntry = citation.hasOwnProperty(fieldQuery[1]);
+
+			let fieldAbsoluteStart = citeQuery.index + fieldQuery.index;
+			let fieldAbsoluteEnd = fieldAbsoluteStart + fieldQuery[0].length;
+
+			// Find the start and end of the whole line for removal edits
+			let lineStart = fieldAbsoluteStart;
+			while (lineStart > 0 && text[lineStart - 1] !== '\n') {
+				lineStart--;
+			}
+			let lineEnd = fieldAbsoluteEnd;
+			while (lineEnd < text.length && text[lineEnd] !== '\n') {
+				lineEnd++;
+			}
+			if (lineEnd < text.length) {
+				lineEnd++; // include the newline character
+			}
+
 			if (!fieldInEntry) {
 				let fieldDiagnostic: Diagnostic = {
 					severity: DiagnosticSeverity.Information,
 					range: {
-						start: textDocument.positionAt(citeQuery.index + fieldQuery.index),
-						end: textDocument.positionAt(citeQuery.index + fieldQuery.index + fieldQuery[1].length),
+						start: textDocument.positionAt(fieldAbsoluteStart),
+						end: textDocument.positionAt(fieldAbsoluteStart + fieldQuery[1].length),
 					},
 					message: fieldQuery[1] + ' not in Entry Type: @' + citeQuery[1] + '',
 					source: 'BibTeX'
@@ -227,34 +245,34 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 						}
 					];
 				}
-				let fieldEdit: TextEdit[] = [
+				diagnostics.push(fieldDiagnostic);
+				let fieldRemoveEdit: TextEdit[] = [
 					{
 						range: {
-							start: textDocument.positionAt(citeQuery.index + fieldQuery.index),
-							end: textDocument.positionAt(Number.MAX_VALUE)
+							start: textDocument.positionAt(lineStart),
+							end: textDocument.positionAt(lineEnd),
 						},
-						newText: 'Test'
+						newText: ''
 					}
 				];
-				diagnostics.push(fieldDiagnostic);
 				let fieldAction: CodeAction = {
 					title: 'Remove Unnecessary Field',
 					kind: CodeActionKind.QuickFix,
 					diagnostics: [fieldDiagnostic],
 					edit: {
 						changes: {
-							textEdit: fieldEdit
+							[textDocument.uri]: fieldRemoveEdit
 						}
 					}
 				};
-				codeActions.push(fieldAction);
+				docCodeActions.push(fieldAction);
 			}
 			if (fieldQuery[2].length === 0) {
 				let fieldValueDiagnostic: Diagnostic = {
 					severity: DiagnosticSeverity.Information,
 					range: {
-						start: textDocument.positionAt(citeQuery.index + fieldQuery.index),
-						end: textDocument.positionAt(Number.MAX_VALUE),
+						start: textDocument.positionAt(fieldAbsoluteStart),
+						end: textDocument.positionAt(fieldAbsoluteEnd),
 					},
 					message: fieldQuery[1] + ' is empty',
 					source: 'BibTeX'
@@ -271,25 +289,31 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 					];
 				}
 				diagnostics.push(fieldValueDiagnostic);
-				let fieldValueEdit: TextEdit[] = [
+				let fieldValueRemoveEdit: TextEdit[] = [
 					{
 						range: {
-							start: textDocument.positionAt(citeQuery.index + fieldQuery.index),
-							end: textDocument.positionAt(citeQuery.index + fieldQuery.index + fieldQuery[0].length)
+							start: textDocument.positionAt(lineStart),
+							end: textDocument.positionAt(lineEnd),
 						},
 						newText: ''
 					}
 				];
-				diagnostics.push(fieldValueDiagnostic);
 				let fieldValueAction: CodeAction = {
 					title: 'Remove Empty Field',
 					kind: CodeActionKind.QuickFix,
 					diagnostics: [fieldValueDiagnostic],
+					edit: {
+						changes: {
+							[textDocument.uri]: fieldValueRemoveEdit
+						}
+					}
 				};
-				codeActions.push(fieldValueAction);
+				docCodeActions.push(fieldValueAction);
 			}
 		}
 	}
+
+	documentCodeActions.set(textDocument.uri, docCodeActions);
 
 	connection.sendDiagnostics({
 		uri: textDocument.uri,
@@ -299,8 +323,22 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 }
 
 connection.onCodeAction((params) => {
-	//return codeActions;
-	return [];
+	const uri = params.textDocument.uri;
+	const actions = documentCodeActions.get(uri) || [];
+	const contextDiagnostics = params.context.diagnostics;
+
+	return actions.filter(action => {
+		if (!action.diagnostics || action.diagnostics.length === 0) {
+			return false;
+		}
+		return action.diagnostics.some(actionDiag =>
+			contextDiagnostics.some(ctxDiag =>
+				actionDiag.range.start.line === ctxDiag.range.start.line &&
+				actionDiag.range.start.character === ctxDiag.range.start.character &&
+				actionDiag.message === ctxDiag.message
+			)
+		);
+	});
 });
 
 // Monitored files changed in VSCode
