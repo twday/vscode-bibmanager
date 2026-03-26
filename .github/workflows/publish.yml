@@ -60,12 +60,32 @@ jobs:
       - name: Package extension
         run: npx @vscode/vsce package -o bibmanager.vsix
 
+
       - name: Publish to Visual Studio Marketplace
-        run: npx @vscode/vsce publish --packagePath bibmanager.vsix -p "${VSCE_PAT}"
+        run: |
+          set +e
+          OUTPUT=$(npx @vscode/vsce publish --packagePath bibmanager.vsix -p "${VSCE_PAT}" 2>&1)
+          STATUS=$?
+          echo "$OUTPUT"
+          if [ $STATUS -eq 0 ]; then
+            exit 0
+          elif echo "$OUTPUT" | grep -q 'already exists'; then
+            echo "Extension version already published. Skipping error."
+            exit 0
+          else
+            exit $STATUS
+          fi
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
       - name: Publish to Open VSX
-        run: npx ovsx publish -p "${OVSX_PAT}" bibmanager.vsix
+        run: |
+          npx ovsx publish -p "${OVSX_PAT}" bibmanager.vsix || \
+          if grep -q 'This extension version already exists' <<< "$(npx ovsx publish -p \"${OVSX_PAT}\" bibmanager.vsix 2>&1)"; then
+            echo "Extension version already published on Open VSX. Skipping error.";
+            exit 0;
+          else
+            exit 1;
+          fi
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
