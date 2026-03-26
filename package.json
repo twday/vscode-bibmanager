@@ -43,16 +43,62 @@
 				"title": "Refresh",
 				"icon": {
 					"light": "resources/light/refresh.svg",
-					"dark": "resources/light/refresh.svg"
+					"dark": "resources/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "bibTexEntries.copyKey",
+				"title": "Copy Key to Clipboard"
+			},
+			{
+				"command": "bibTexEntries.copyCite",
+				"title": "Copy Cite to Clipboard"
+			},
+			{
+				"command": "bibTexEntries.search",
+				"title": "Search BibTeX Entries",
+				"icon": {
+					"light": "resources/light/search.svg",
+					"dark": "resources/dark/search.svg"
+				}
+			},
+			{
+				"command": "bibTexEntries.clearSearch",
+				"title": "Clear BibTeX Search",
+				"icon": {
+					"light": "resources/light/clear.svg",
+					"dark": "resources/dark/clear.svg"
 				}
 			}
 		],
 		"menus": {
 			"view/title": [
 				{
+					"command": "bibTexEntries.search",
+					"when": "view == bibTexEntries",
+					"group": "navigation"
+				},
+				{
+					"command": "bibTexEntries.clearSearch",
+					"when": "view == bibTexEntries && bibManager:searchActive == true",
+					"group": "navigation"
+				},
+				{
 					"command": "bibTexEntries.refreshEntry",
 					"when": "view == bibTexEntries",
 					"group": "navigation"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "bibTexEntries.copyKey",
+					"when": "view == bibTexEntries && viewItem == bibEntry",
+					"group": "inline"
+				},
+				{
+					"command": "bibTexEntries.copyCite",
+					"when": "view == bibTexEntries && viewItem == bibEntry",
+					"group": "inline"
 				}
 			]
 		},

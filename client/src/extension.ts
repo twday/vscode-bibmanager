@@ -1,15 +1,17 @@
 import * as path from 'path';
+
 import {
-	Range,
 	window,
 	commands,
 	workspace,
-	WorkspaceEdit,
 	ExtensionContext,
 	CodeAction,
 	ProviderResult,
 	Diagnostic,
-	CodeActionContext
+	CodeActionContext,
+	Uri,
+	Selection,
+	env
 } from 'vscode';
 
 import {
@@ -20,19 +22,83 @@ import {
 	Command,
 } from 'vscode-languageclient/node';
 
-var types = ['electronic', 'article', 'inproceedings', 'misc'];
-enum SortType {
-	KeyAsc,
-	KeyDsc,
-	TitleAsc,
-	TitleDsc,
-	AuthorAsc,
-	AuthorDsc
-}
+import {
+	BibManager,
+	SortType
+} from './BibManager';
+import { BibTexEntriesProvider } from './BibTexEntriesProvider';
 
 let client: LanguageClient;
 
+
 export function activate(context: ExtensionContext) {
+	let bibManager: BibManager = BibManager.Instance;
+
+	bibManager.UpdateBibList().then(() => {
+		const rootPath = workspace.workspaceFolders && workspace.workspaceFolders.length > 0 ? workspace.workspaceFolders[0].uri.fsPath : undefined;
+		const bibTexEntriesProvider = new BibTexEntriesProvider(rootPath);
+		window.registerTreeDataProvider('bibTexEntries', bibTexEntriesProvider);
+		commands.registerCommand('bibTexEntries.refreshEntry', () => bibTexEntriesProvider.refresh());
+
+		// Search command
+		commands.registerCommand('bibTexEntries.search', async () => {
+			const term = await window.showInputBox({ prompt: 'Search BibTeX entries (by key, title, or author)' });
+			if (term !== undefined) {
+				bibTexEntriesProvider.setSearchTerm(term);
+				await commands.executeCommand('setContext', 'bibManager:searchActive', !!term && term.trim().length > 0);
+			}
+		});
+		// Clear search command
+		commands.registerCommand('bibTexEntries.clearSearch', async () => {
+			bibTexEntriesProvider.clearSearch();
+			await commands.executeCommand('setContext', 'bibManager:searchActive', false);
+		});
+
+		// Command to navigate to a bibtex entry
+		commands.registerCommand('bibTexEntries.goToEntry', async (filePath: string, lineNumber: number) => {
+			try {
+				const document = await workspace.openTextDocument(Uri.file(filePath));
+				const editor = await window.showTextDocument(document);
+
+				// Navigate to the line (lineNumber is 0-indexed)
+				const position = editor.document.lineAt(lineNumber).range.start;
+				editor.selection = new Selection(position, position);
+				editor.revealRange(editor.selection, 1); // Center the view
+			} catch (error) {
+				window.showErrorMessage(`Failed to navigate to entry: ${error}`);
+			}
+		});
+
+		// Command to copy the bibtex key to clipboard
+		commands.registerCommand('bibTexEntries.copyKey', async (treeItem: any) => {
+			try {
+				if (treeItem.key) {
+					await env.clipboard.writeText(treeItem.key);
+					window.showInformationMessage(`Copied "${treeItem.key}" to clipboard`);
+				} else {
+					window.showErrorMessage('No key found to copy');
+				}
+			} catch (error) {
+				window.showErrorMessage(`Failed to copy key: ${error}`);
+			}
+		});
+
+		// Command to copy the bibtex key as a cite tag to clipboard
+		commands.registerCommand('bibTexEntries.copyCite', async (treeItem: any) => {
+			try {
+				if (treeItem.key) {
+					const citeText = `\\cite{${treeItem.key}}`;
+					await env.clipboard.writeText(citeText);
+					window.showInformationMessage(`Copied "${citeText}" to clipboard`);
+				} else {
+					window.showErrorMessage('No key found to copy');
+				}
+			} catch (error) {
+				window.showErrorMessage(`Failed to copy cite: ${error}`);
+			}
+		});
+	});
+
 	let serverModule = context.asAbsolutePath(
 		path.join('server', 'out', 'server.js')
 	);
@@ -99,9 +165,6 @@ export function activate(context: ExtensionContext) {
 
 	client.registerProposedFeatures();
 	void client.start();
-
-	let bibManager = new BibManager();
-
 	let sortKeyAscending = commands.registerTextEditorCommand('extension.sortKeyAsc', () => {
 		bibManager.SortEntries(SortType.KeyAsc);
 		window.showInformationMessage('Sorting By Key in Ascending Order');
@@ -135,166 +198,4 @@ export function deactivate(): Thenable<void> | undefined {
 	}
 
 	return client.stop();
-}
-
-class BibManager {
-
-	bibEntries: BibEntry[] = [];
-
-	constructor() {
-		this.UpdateBibList();
-	}
-
-	ResetBibList() {
-		this.bibEntries = [];
-	}
-
-	UpdateBibList() {
-		this.ResetBibList();
-		let doc = window.activeTextEditor.document;
-
-		var regex = /[\t{},]*/g;
-		var whitespace = /[\s]*/g;
-
-		if (doc.languageId === "bibtex") {
-			//this._statusBarItem.show();
-			let docContent = doc.getText();
-
-			let entries = docContent.split("@");
-
-			entries.forEach(entry => {
-				var bibEntry = new BibEntry();
-				entry.split("\n").forEach(line => {
-					line = line.replace("=", "");
-					line = line.replace("{", "=");
-					line = line.replace(regex, "");
-					//console.log(line);
-					var kv = line.split("=").filter(String);
-					//console.log(kv);
-					if (types.indexOf(kv[0]) > -1) {
-						bibEntry.type = kv[0];
-						bibEntry.key = kv[1];
-					} else {
-						if (kv[0] !== undefined) {
-							var key = kv[0].replace(whitespace, "");
-							switch (key) {
-								case "title":
-									bibEntry.title = kv[1];
-									break;
-								case "author":
-									bibEntry.author = kv[1];
-									break;
-								case "journal":
-									bibEntry.journal = kv[1];
-									break;
-								case "booktitle":
-									bibEntry.booktitle = kv[1];
-									break;
-								case "publisher":
-									bibEntry.publisher = kv[1];
-									break;
-								case "number":
-									bibEntry.number = kv[1];
-									break;
-								case "volume":
-									bibEntry.volume = parseInt(kv[1], 10);
-									break;
-								case "url":
-									bibEntry.url = kv[1];
-									break;
-								case "year":
-									bibEntry.year = parseInt(kv[1], 10);
-									break;
-								case "organization":
-									bibEntry.organization = kv[1];
-									break;
-							}
-						}
-					}
-				});
-				if (bibEntry.key !== undefined) {
-					this.bibEntries.push(bibEntry);
-				}
-			});
-		}
-	}
-
-	public SortEntries(sortType: SortType) {
-		this.UpdateBibList();
-
-		let doc = window.activeTextEditor.document;
-
-		switch (sortType) {
-			case SortType.KeyAsc:
-				this.bibEntries.sort(function (a, b) {
-					var x = a.key.toLowerCase();
-					var y = b.key.toLowerCase();
-					if (x < y) { return -1; }
-					if (x > y) { return 1; }
-					return 0;
-				});
-				break;
-			case SortType.KeyDsc:
-				this.bibEntries.sort(function (a, b) {
-					var x = a.key.toLowerCase();
-					var y = b.key.toLowerCase();
-					if (x > y) { return -1; }
-					if (x < y) { return 1; }
-					return 0;
-				});
-				break;
-			case SortType.TitleAsc:
-				this.bibEntries.sort(function (a, b) {
-					var x = a.title.toLowerCase();
-					var y = b.title.toLowerCase();
-					if (x < y) { return -1; }
-					if (x > y) { return 1; }
-					return 0;
-				});
-				break;
-			case SortType.TitleDsc:
-				this.bibEntries.sort(function (a, b) {
-					var x = a.title.toLowerCase();
-					var y = b.title.toLowerCase();
-					if (x > y) { return -1; }
-					if (x < y) { return 1; }
-					return 0;
-				});
-				break;
-		}
-
-		this.UpdateBibFile();
-	}
-
-	UpdateBibFile() {
-		var out = this.bibEntries.map(bibEntry => {
-			var { type, key, ...rest } = bibEntry;
-
-			return `@${type}{${key},\n${Object.keys(rest).map((el) => { return `\t${el}={${bibEntry[el]}}\n`; })}}\n`;
-		});
-
-		var edit = new WorkspaceEdit();
-		edit.replace(window.activeTextEditor.document.uri, new Range(0, 0, window.activeTextEditor.document.lineCount, window.activeTextEditor.document.eol), out.toString());
-		workspace.applyEdit(edit);
-	}
-
-	dispose() {
-		//this._statusBarItem.dispose();
-	}
-}
-
-class BibEntry {
-	key: String;
-	type: String;
-	title: String;
-	author: String;
-	journal: String;
-	booktitle: String;
-	pages: String;
-	number: String;
-	volume: number;
-	year: number;
-	url: String;
-	publisher: String;
-	organization: String;
 }

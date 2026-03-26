@@ -1,23 +1,23 @@
 import {
 	createConnection,
-	CodeAction,
-	CodeActionKind,
-	CompletionItem,
-	CompletionItemKind,
+	TextDocuments,
 	Diagnostic,
 	DiagnosticSeverity,
-	DidChangeConfigurationNotification,
 	ProposedFeatures,
 	InitializeParams,
+	DidChangeConfigurationNotification,
+	CompletionItem,
+	CompletionItemKind,
+	TextDocumentPositionParams,
 	MarkupKind,
 	InsertTextFormat,
+	CodeAction,
 	TextEdit,
-	TextDocuments,
-	TextDocumentSyncKind,
-	TextDocumentPositionParams,
+	CodeActionKind,
 	FormattingOptions,
-	Position,
 	WorkspaceEdit,
+	Position,
+	TextDocumentSyncKind,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -65,7 +65,7 @@ connection.onInitialize((params: InitializeParams) => {
 			},
 			codeActionProvider: true,
 			documentOnTypeFormattingProvider: {
-				firstTriggerCharacter: ",",
+				firstTriggerCharacter: ',',
 			}
 		}
 	};
