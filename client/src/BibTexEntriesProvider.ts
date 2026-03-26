@@ -33,10 +33,6 @@ export class BibTexEntriesProvider implements TreeDataProvider<BibEntryTreeItem>
 				return Promise.resolve(
 					this.getEntriesInFile(element.entries)
 				);
-			} else if (element.type === BibEntryType.entries) {
-				return Promise.resolve(
-					this.getInformationInEntry(element.entries[element.index])
-				);
 			}
 		} else {
 			if (this.bibManager.Entries.size > 0) {
@@ -46,6 +42,8 @@ export class BibTexEntriesProvider implements TreeDataProvider<BibEntryTreeItem>
 				return Promise.resolve([]);
 			}
 		}
+
+		return Promise.resolve([]);
 	}
 
 	refresh(): void {
@@ -54,23 +52,19 @@ export class BibTexEntriesProvider implements TreeDataProvider<BibEntryTreeItem>
 		});
 	}
 
-	private getInformationInEntry(entry: BibEntry): BibEntryTreeItem[] {
-		let treeItems: BibEntryTreeItem[] = [];
-
-		for (var prop in entry) {
-			if (entry[prop] !== undefined) {
-				treeItems.push(new BibEntryTreeItem(`${prop}: ${entry[prop]}`, 0, BibEntryType.entry, undefined, TreeItemCollapsibleState.None));
-			}
-		}
-
-		return treeItems;
-	}
-
 	private getEntriesInFile(entries: BibEntry[]): BibEntryTreeItem[] {
 		let treeItems: BibEntryTreeItem[] = [];
 
 		entries.forEach((entry, index) => {
-			treeItems.push(new BibEntryTreeItem(entry.title, index, BibEntryType.entries, entries, TreeItemCollapsibleState.Collapsed));
+			treeItems.push(new BibEntryTreeItem(
+				entry.title || entry.key,
+				index,
+				BibEntryType.entries,
+				entries,
+				TreeItemCollapsibleState.None,
+				entry.filePath,
+				entry.lineNumber
+			));
 		});
 
 		return treeItems;

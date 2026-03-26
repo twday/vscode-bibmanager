@@ -8,7 +8,10 @@ import {
 	CodeAction,
 	ProviderResult,
 	Diagnostic,
-	CodeActionContext
+	CodeActionContext,
+	Uri,
+	Selection,
+	env
 } from 'vscode';
 
 import {
@@ -36,6 +39,35 @@ export function activate(context: ExtensionContext) {
 		const bibTexEntriesProvider = new BibTexEntriesProvider(rootPath);
 		window.registerTreeDataProvider('bibTexEntries', bibTexEntriesProvider);
 		commands.registerCommand('bibTexEntries.refreshEntry', () => bibTexEntriesProvider.refresh());
+
+		// Command to navigate to a bibtex entry
+		commands.registerCommand('bibTexEntries.goToEntry', async (filePath: string, lineNumber: number) => {
+			try {
+				const document = await workspace.openTextDocument(Uri.file(filePath));
+				const editor = await window.showTextDocument(document);
+
+				// Navigate to the line (lineNumber is 0-indexed)
+				const position = editor.document.lineAt(lineNumber).range.start;
+				editor.selection = new Selection(position, position);
+				editor.revealRange(editor.selection, 1); // Center the view
+			} catch (error) {
+				window.showErrorMessage(`Failed to navigate to entry: ${error}`);
+			}
+		});
+
+		// Command to copy the bibtex key to clipboard
+		commands.registerCommand('bibTexEntries.copyKey', async (treeItem: any) => {
+			try {
+				if (treeItem.key) {
+					await env.clipboard.writeText(treeItem.key);
+					window.showInformationMessage(`Copied "${treeItem.key}" to clipboard`);
+				} else {
+					window.showErrorMessage('No key found to copy');
+				}
+			} catch (error) {
+				window.showErrorMessage(`Failed to copy key: ${error}`);
+			}
+		});
 	});
 
 	let serverModule = context.asAbsolutePath(

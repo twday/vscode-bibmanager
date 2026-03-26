@@ -54,9 +54,17 @@ export class BibManager {
 				let entries = docContent.split("@").filter((e) => e.trim() !== '' && e !== null);
 
 				var bibEntries: BibEntry[] = [];
+				let currentPosition = 0;
+
 				await Promise.all(entries.map((entry) => {
 					var bibEntry = new BibEntry();
 					var lines = entry.split("\n");
+
+					// Calculate line number
+					const preEntryContent = docContent.substring(0, docContent.indexOf("@" + entry));
+					const lineNumber = preEntryContent.split("\n").length - 1;
+					bibEntry.lineNumber = lineNumber;
+					bibEntry.filePath = doc.fileName;
 
 					for (var line of lines) {
 						line = line.replace("=", "");

@@ -12,4 +12,6 @@ export default class BibEntry {
 	url: string;
 	publisher: string;
 	organization: string;
+	filePath?: string;
+	lineNumber?: number;
 }

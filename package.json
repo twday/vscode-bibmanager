@@ -45,6 +45,10 @@
 					"light": "resources/light/refresh.svg",
 					"dark": "resources/light/refresh.svg"
 				}
+			},
+			{
+				"command": "bibTexEntries.copyKey",
+				"title": "Copy Key to Clipboard"
 			}
 		],
 		"menus": {
@@ -53,6 +57,13 @@
 					"command": "bibTexEntries.refreshEntry",
 					"when": "view == bibTexEntries",
 					"group": "navigation"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "bibTexEntries.copyKey",
+					"when": "view == bibTexEntries && viewItem == bibEntry",
+					"group": "inline"
 				}
 			]
 		},
